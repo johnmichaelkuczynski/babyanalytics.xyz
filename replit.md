@@ -1,88 +1,63 @@
-# QuantReason
+# 🎓 QuantReason
 
-A 4-week Quantitative Reasoning course web app for college freshmen. Single-user (no login), AI-tutored lectures, adaptive practice, AI-graded assignments, and real GPTZero-powered AI-detection on submitted answers.
+**The Quantitative Reasoning Studio — A Four-Week College Course That Teaches, Tutors, and Proofs Itself**
 
-## Run & Operate
+---
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000, mounted at `/api`)
-- `pnpm --filter @workspace/qr-course run dev` — run the student-facing web app
-- `pnpm --filter @workspace/qr-course-demo run dev` — run the screencast-style product demo video
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
+## 🧩 Overview
 
-### Required env / secrets
+QuantReason is a self-paced, single-user web course that delivers a full month of college-freshman Quantitative Reasoning — taught, tutored, drilled, and graded entirely by AI, with built-in academic-integrity enforcement.
 
-- `DATABASE_URL` — Postgres connection string (auto-provisioned by Replit)
-- `GPTZERO_API_KEY` — GPTZero API key. Required for real AI detection; without it, the detector silently falls back to a heuristic + LLM scorer.
-- `SESSION_SECRET` — session signing
-- OpenAI access is provided through Replit's AI Integrations proxy — no key needed.
+It compresses the experience of a semester-style QR class into one focused product: read the lecture at the depth you want, ask a tutor scoped to the exact section you're on, drill problems whose difficulty adapts to you in real time, and submit homework, tests, a midterm, and a final that are AI-graded with feedback and screened for AI-generated answers.
 
-## Stack
+Designed for **students, instructors evaluating AI-taught coursework, and researchers studying AI academic integrity**, QuantReason pairs a real curriculum with two layers of AI-authorship detection — surfacing not just *whether* the writing looks AI-generated, but whether the *act of producing it* did.
 
-- pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
-- Frontend: React + Vite + Tailwind, generated React Query hooks from the spec
-- Demo video: React + framer-motion (screencast-style — rebuilt UI, animated cursor, typed inputs, streaming AI responses)
+---
 
-## Where things live
+## 🧠 What It Does
 
-- **OpenAPI spec (contract source of truth):** `lib/api-spec/openapi.yaml`
-- **Generated API hooks + zod:** `lib/api-client-react/src/generated/`, `lib/api-zod/src/generated/`
-- **DB schema:** `lib/db/src/schema/course.ts`
-- **API routes:** `artifacts/api-server/src/routes/` (course, tutor, practice, assignments, analytics, detection, diagnostics, health)
-- **AI detection logic (GPTZero + heuristic + diachronic):** `artifacts/api-server/src/lib/detection.ts`
-- **AI client (OpenAI via Replit proxy):** `artifacts/api-server/src/lib/ai.ts`
-- **Student app pages:** `artifacts/qr-course/src/pages/` (Dashboard, Week, Lecture, Assignments, Analytics, TopicPractice, Diagnostics)
-- **Demo video scenes:** `artifacts/qr-course-demo/src/components/video/video_scenes/`
+- **Four-Week Structured Curriculum** — A complete QR syllabus across 28 topics: proportional reasoning, descriptive statistics, probability, exponential and linear models, financial math, data interpretation, and inference. Each week ships with lectures, homework, and a test; week four adds a midterm and a final.
+- **Three-Depth Lectures** — Every lecture is available at **Short / Medium / Long** length, AI-rewritten while preserving the same examples and learning objectives. Skim the concept, expand it on demand, or read the textbook-style deep cut.
+- **Section-Scoped AI Tutor** — Ask a question about the paragraph you're reading and the answer streams back token-by-token, grounded in that exact lecture section. Suggested starter questions are pre-generated per lecture.
+- **Adaptive Topic Practice** — Generated problem sets that move difficulty up after a streak and down after a miss, with explanations on every answer. Per-session difficulty persists, so each drill picks up where the last one left off.
+- **AI-Graded Assignments** — Homework, tests, midterm, and final are scored by an LLM grader that returns per-problem correctness *plus* a written rationale, then rolls up to a percent score on the attempt.
+- **Two-Layer AI Detection on Every Submission** — Each submitted answer is screened by both a static text classifier (GPTZero) and a diachronic keystroke-pattern detector. Each verdict ships with a human-readable rationale.
+- **Live Analytics** — Dashboard KPIs (attempts, accuracy, streak), per-topic mastery percentages, and a recent-activity feed — so progress, weak spots, and momentum are all visible at a glance.
+- **Operator Diagnostics** — Two one-click self-tests (system health and synthetic-student end-to-end run) verify the entire stack — database, OpenAI integration, GPTZero, detection pipeline, and the practice/grade loop — before you trust a session.
+- **Built-In Product Demo Video** — A 62-second screencast of the live UI — animated cursor, real typing, real streaming responses — ships as its own deployable artifact, so the product can show itself without anyone narrating it.
 
-## Product
+---
 
-QuantReason is a self-paced 4-week QR course. Students:
+## ⚙️ Technical Features
 
-1. **Read lectures** at Short / Medium / Long granularity (length-toggleable AI-rewritten copy).
-2. **Ask a tutor** about any section — answers stream token-by-token.
-3. **Practice on this tab** — generated problems per lecture section.
-4. **Topic-adaptive practice** — difficulty adjusts based on session accuracy.
-5. **Submit homework and tests** — AI grades each answer with feedback, and GPTZero flags AI-generated submissions.
-6. **Track progress in Analytics** — KPIs, topic mastery, and recent activity.
+- **Two-Layer AI-Authorship Detection** —
+  - **Static (GPTZero):** Every submitted answer is sent to GPTZero's `predict/text` endpoint; the per-document AI probability is blended `0.85 × GPTZero + 0.15 × structural-heuristic` for the final score. If GPTZero is unavailable, the system silently falls back to an LLM scorer plus heuristic — submissions never block.
+  - **Diachronic (Keystroke Pattern):** The student textarea captures keystroke count, erase count, bulk-insert events, longest bulk insert, rewrite segments, and total duration. A scorer penalizes paste-then-reword behavior, low keystroke-to-output ratios, and impossibly sustained typing speeds — catching AI use even when the final text is reworded enough to pass GPTZero.
+- **Two Diagnostic Self-Tests** —
+  - **System Diagnostic** (`/diagnostics/system`): Eight ordered checks — environment, database round-trip, course-seed integrity, OpenAI chat completion, OpenAI JSON mode, detection pipeline, AI-positive control sample, and GPTZero connectivity. Each step returns pass/fail, timing, and a raw error string.
+  - **Synthetic-Student Diagnostic** (`/diagnostics/synthetic-run`): Spins up a fake student, runs a practice session (wrong → adjust ↓ → right → adjust ↑), takes a full assignment attempt, submits it, and verifies grading + detection + analytics all reflect the run. End-to-end stack proof in one click.
+- **Contract-First API** — A single OpenAPI document is the source of truth; React Query hooks for the UI and Zod validators for the server are generated from it. Request and response shapes can't drift between client and server because both come from the same spec.
+- **Streaming AI Tutor** — Token-by-token Server-Sent-Event streaming for tutor answers, with a section-scoped system prompt so responses stay grounded in the lecture the student is reading.
+- **Adaptive Practice Engine** — Per-session difficulty (1–4 continuous) adjusts after each attempt; the next-problem generator takes the current difficulty and the topic as input, so the question pool is generated on demand instead of pre-baked.
+- **Real-React Demo Video** — The 62-second product walkthrough is a real React app, not a slideshow: persistent sidebar, animated SVG cursor, character-by-character typing, word-by-word streaming responses, and scene-synced background audio — all exported as MP4 from a single browser tab.
+- **Operator Console** — A dedicated Diagnostics page in the student app surfaces both self-tests with one-click execution, per-step pass/fail rows, and raw error output for debugging.
+- **Living README** — This README plus a companion `BLUEPRINT.md` architecture document are kept in lock-step with the code — short-form and long-form views of the same truth.
 
-### AI detection
+---
 
-Every submitted answer is run through two layers:
+## 🎓 Designed For
 
-- **GPTZero** (`POST https://api.gptzero.me/v2/predict/text`) returns a per-document AI probability. Blended 0.85 × GPTZero + 0.15 × structural heuristic to produce the final `aiScore`.
-- **Diachronic detection** scores the keystroke trace (bulk inserts, typing-to-output ratio, sustained WPM, rewrite-on-paste pattern) to catch users who paste AI output and reword it.
+- **College Freshmen & Self-Learners:** A complete one-month QR course delivered with on-demand tutoring and adaptive practice — no instructor required.
+- **Instructors & Curriculum Designers:** A working reference for what AI-taught, AI-graded, AI-detection-screened coursework actually looks like end-to-end.
+- **Academic-Integrity Researchers:** A live testbed for layered AI-authorship detection that combines text-based classification with behavioral keystroke evidence.
+- **Product & Engineering Teams:** A reference implementation of contract-first full-stack architecture, streaming AI UX, and self-diagnostic operator tooling in a Replit pnpm monorepo.
 
-Both surface as `aiFlagged` / `diachronicFlagged` booleans plus a human-readable rationale.
+---
 
-## Architecture decisions
+## 💡 Core Idea
 
-- **Contract-first API.** `lib/api-spec/openapi.yaml` is the source of truth; the server validates with generated Zod and the client uses generated React Query hooks. Never hand-write request/response types — regenerate.
-- **Single composite logger.** Server code uses `req.log` in routes and the singleton `logger` elsewhere — never `console.log`.
-- **GPTZero failure is non-fatal.** If the API key is missing or the call fails, `gptzeroAiScore` returns `null` and detection silently falls back to the LLM/heuristic blend. Submissions never block on detection.
-- **Demo video is a real React app, not a slideshow.** The product demo at `/qr-course-demo/` rebuilds the QuantReason UI as live JSX with an animated cursor, character-by-character typing, and token-streaming AI responses — so anyone scrubbing the video sees the actual product behavior.
+QuantReason reframes an AI-taught course as a *closed accountability loop*.
 
-## User preferences
+It doesn't just teach the material and grade the homework — it **teaches**, **tutors**, **drills**, **grades**, **detects misuse**, and **proves the whole pipeline still works** with a single click. The result is a self-paced course that students can actually trust to be fair, and that instructors can actually trust to be honest.
 
-- Be direct. Skip preamble, apologies, and progress narration. Fix what's asked.
-- Don't show marketing reels, kinetic typography headlines, or floating-screenshot compositions when the user asks for a "demo video" — they want a screencast of the actual product.
-- Don't ask for confirmation on unambiguous instructions.
-
-## Gotchas
-
-- **Don't edit generated files.** `lib/api-client-react/src/generated/*` and `lib/api-zod/src/generated/*` are overwritten by `pnpm --filter @workspace/api-spec run codegen`. Change the spec, then regenerate.
-- **Don't change OpenAPI `info.title`.** It controls generated filenames; renaming it breaks every import.
-- **Demo video typecheck noise is pre-existing.** `src/lib/video/animations.ts` and `src/lib/video/hooks.ts` come from the video scaffold and emit harmless `tsc` errors; Vite still serves and exports correctly. Don't "fix" them.
-- **Workflows, not `pnpm dev` at root.** Always restart the artifact's workflow (`artifacts/<slug>: web`) — root `pnpm dev` doesn't exist and the artifacts depend on workflow-injected `PORT` / `BASE_PATH`.
-- **Demo video export includes the music.** The export path renders `<VideoTemplate />` unmuted; the iframe preview defaults to muted with a `Volume2` toggle.
-
-## Pointers
-
-- See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
-- See the `video-js` skill for how the demo video, scene controls, and audio wiring work
+**QuantReason — where the curriculum, the tutor, the grader, and the integrity check all live in one room.**
