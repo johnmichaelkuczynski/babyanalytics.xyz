@@ -1,1 +1,2 @@
 - [Course answer-key QC diagnostic](course-qc-diagnostic.md) — LLM key-legitimacy checks must judge against the course's own lecture text (not generic knowledge), or correct course-specific keys false-flag.
+- [Clerk + wouter auth](clerk-wouter-auth.md) — protected-route HOC for wouter must use ComponentType<any> (not Record-constrained); base path `/` stays a public landing, dashboard lives at `/dashboard`.

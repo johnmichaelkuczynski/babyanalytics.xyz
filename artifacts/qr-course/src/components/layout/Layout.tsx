@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, PenTool, BarChart3, Activity, RotateCcw, Sparkles } from "lucide-react";
+import { LayoutDashboard, PenTool, BarChart3, Activity, RotateCcw, Sparkles, LogOut } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useClerk, useUser } from "@clerk/react";
+
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 export function Sidebar() {
   const [location] = useLocation();
 
   const navItems = [
-    { href: "/", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { href: "/assignments", label: "Assignments", icon: PenTool },
     { href: "/analytics", label: "Analytics", icon: BarChart3 },
   ];
@@ -15,7 +18,7 @@ export function Sidebar() {
   return (
     <div className="w-64 border-r bg-sidebar flex flex-col h-full h-screen sticky top-0">
       <div className="p-6 border-b border-border">
-        <Link href="/">
+        <Link href="/dashboard">
           <div className="flex items-center gap-3 cursor-pointer">
             <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center text-primary-foreground font-serif font-bold text-lg">
               ER
@@ -56,6 +59,8 @@ function TopBar() {
   const [location, setLocation] = useLocation();
   const active = location.startsWith("/diagnostics");
   const qc = useQueryClient();
+  const { signOut } = useClerk();
+  const { user } = useUser();
   const [resetting, setResetting] = useState(false);
   const [expanding, setExpanding] = useState(false);
 
@@ -141,6 +146,27 @@ function TopBar() {
           Diagnostic
         </button>
       </Link>
+
+      <div className="mx-1 h-6 w-px bg-border" />
+
+      {user && (
+        <span
+          className="hidden sm:inline text-sm text-muted-foreground max-w-[12rem] truncate"
+          title={user.primaryEmailAddress?.emailAddress ?? undefined}
+          data-testid="text-user-email"
+        >
+          {user.primaryEmailAddress?.emailAddress ?? user.firstName ?? "Account"}
+        </span>
+      )}
+      <button
+        onClick={() => signOut({ redirectUrl: basePath || "/" })}
+        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium border border-border hover:bg-secondary"
+        data-testid="button-sign-out"
+        title="Sign out"
+      >
+        <LogOut className="w-4 h-4" />
+        Sign out
+      </button>
     </div>
   );
 }
