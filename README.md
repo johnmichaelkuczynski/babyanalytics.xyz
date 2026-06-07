@@ -1,26 +1,26 @@
-# 🎓 QuantReason
+# ⚖️ EthosReason
 
-**The Quantitative Reasoning Studio — Executable College Coursework**
+**The Ethics Studio — Executable College Coursework**
 
 ---
 
 ## 🧩 Overview
 
-QuantReason is a full-service self-paced learning platform that delivers a complete four-week college-freshman Quantitative Reasoning course — taught, tutored, drilled, graded, and integrity-checked entirely by AI.
+EthosReason is a full-service self-paced learning platform that delivers a complete four-unit college Ethics course — taught, tutored, drilled, graded, and integrity-checked entirely by AI.
 
 It performs end-to-end coursework: depth-adjustable lectures, section-scoped Socratic tutoring, adaptive problem generation, and rubric-faithful AI grading — from a 90-second concept skim all the way to a full midterm and final with per-problem rationales.
 
-Designed for **students, instructors evaluating AI-taught coursework, and academic-integrity researchers**, it merges a real 28-topic QR syllabus with two layers of AI-authorship detection — producing a course that students can trust to be fair and that instructors can trust to be honest.
+Designed for **students, instructors evaluating AI-taught coursework, and academic-integrity researchers**, it merges a real 27-topic Ethics syllabus — grounded in "Some Fundamental Principles Relating to Ethics" — with two layers of AI-authorship detection, producing a course that students can trust to be fair and that instructors can trust to be honest.
 
 ---
 
 ## 🧠 What It Does
 
-- **Four-Week Structured Curriculum** — A complete QR syllabus across 28 topics: proportional reasoning, descriptive statistics, probability, exponential and linear models, financial math, data interpretation, and inference. Each week ships with lectures, homework, and a test; week four adds a midterm and a final.
-- **Three-Depth Lectures** — Every lecture is available at **Short / Medium / Long** length, AI-rewritten while preserving the same worked examples and learning objectives. Skim the concept, expand it on demand, or read the textbook-style deep cut.
+- **Four-Unit Structured Curriculum** — A complete Ethics syllabus across 27 topics: the foundations of value (normative vs. descriptive, intrinsic vs. instrumental goodness, commendableness, non-privative attributes); obligation, right, and wrong; acts, agents, and judgment (intention, the Hitler problem, autonomy); and metaethics and moral truth (is/ought, Moore's open question, ethical realism). Each unit ships with lectures, homework, and a test; Unit 2 adds a midterm and Unit 4 a final.
+- **Three-Depth Lectures** — Every lecture is available at **Short / Medium / Long** length, AI-rewritten while preserving the same examples and learning objectives. Skim the concept, expand it on demand, or read the textbook-style deep cut.
 - **Section-Scoped AI Tutor** — Ask a question about the paragraph you're reading and the answer streams back token-by-token, grounded in that exact lecture section. Suggested starter questions are pre-generated per lecture.
-- **Adaptive Topic Practice** — Generated problem sets that move difficulty up after a streak and down after a miss, with worked explanations on every answer. Per-session difficulty persists, so each drill picks up where the last one left off.
-- **AI-Graded Assignments** — Homework, tests, midterm, and final are scored by an LLM grader that returns per-problem correctness *plus* a written rationale, then rolls up to a percent score on the attempt.
+- **Adaptive Topic Practice** — Generated problem sets that move difficulty up after a streak and down after a miss, with explanations on every answer. Per-session difficulty persists, so each drill picks up where the last one left off.
+- **AI-Graded Assignments** — Homework, tests, midterm, and final are scored by an LLM grader that judges semantic equivalence to a model answer, returns per-problem correctness *plus* a written rationale, then rolls up to a percent score on the attempt.
 - **Two-Layer AI-Authorship Detection** — Each submitted answer is screened by both a static text classifier (GPTZero) and a diachronic keystroke-pattern detector. Each verdict ships with a human-readable rationale.
 - **Live Analytics** — Dashboard KPIs (attempts, accuracy, streak), per-topic mastery percentages, and a recent-activity feed — so progress, weak spots, and momentum are all visible at a glance.
 - **Operator Diagnostics** — Two one-click self-tests verify the entire stack — database, OpenAI, GPTZero, detection pipeline, and the practice/grade loop — before you trust a session.
@@ -36,13 +36,13 @@ Designed for **students, instructors evaluating AI-taught coursework, and academ
 - **Contract-First API:** A single OpenAPI document is the source of truth; React Query hooks for the UI and Zod validators for the server are generated from it. Request and response shapes can't drift between client and server because both come from the same spec.
 - **Streaming AI Tutor:** Token-by-token Server-Sent-Event streaming for tutor answers, with a section-scoped system prompt so responses stay grounded in the lecture the student is reading.
 - **Adaptive Practice Engine:** Per-session difficulty (1–4 continuous) adjusts after each attempt; the next-problem generator takes the current difficulty and the topic as input, so the question pool is generated on demand instead of pre-baked.
-- **Real-React Demo Video:** The 62-second product walkthrough is a real React app, not a slideshow: persistent sidebar, animated SVG cursor, character-by-character typing, word-by-word streaming responses, and scene-synced background audio — all exported as MP4 from a single browser tab.
+- **Real-React Demo Video:** The product walkthrough is a real React app, not a slideshow: persistent sidebar, animated SVG cursor, character-by-character typing, word-by-word streaming responses, and scene-synced background audio — all exported as MP4 from a single browser tab.
 
 ---
 
-## 🎓 Designed For
+## ⚖️ Designed For
 
-- **College Freshmen & Self-Learners:** A complete one-month QR course delivered with on-demand tutoring and adaptive practice — no instructor required.
+- **College Students & Self-Learners:** A complete Ethics course delivered with on-demand tutoring and adaptive practice — no instructor required.
 - **Instructors & Curriculum Designers:** A working reference for what AI-taught, AI-graded, AI-detection-screened coursework actually looks like end-to-end.
 - **Academic-Integrity Researchers:** A live testbed for layered AI-authorship detection that combines text-based classification with behavioral keystroke evidence.
 - **Product & Engineering Teams:** A reference implementation of contract-first full-stack architecture, streaming AI UX, and self-diagnostic operator tooling in a pnpm monorepo.
@@ -51,8 +51,8 @@ Designed for **students, instructors evaluating AI-taught coursework, and academ
 
 ## 💡 Core Idea
 
-QuantReason redefines an AI-taught course as a *closed accountability loop*.
+EthosReason redefines an AI-taught course as a *closed accountability loop*.
 
 It doesn't just teach the material and grade the homework — it **teaches**, **tutors**, **drills**, **grades**, **detects misuse**, and **proves the whole pipeline still works** with a single click. The result is a self-paced course students can actually trust to be fair, and that instructors can actually trust to be honest.
 
-**QuantReason — where the curriculum, the tutor, the grader, and the integrity check all live in one room.**
+**EthosReason — where the curriculum, the tutor, the grader, and the integrity check all live in one room.**

@@ -13,7 +13,7 @@ export function Scene4({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
     // 0-1.5s: Cursor to sidebar "Analytics", clicks. Crossfade.
     // 1.5-4.0s: KPI tiles count up.
     // 4.0-6.0s: Topic Mastery rows stagger in.
-    // 6.0-8.5s: Cursor to "Ratios and proportions", click.
+    // 6.0-8.5s: Cursor to "Commendableness and moral worth", click.
     // 8.5-10s: Crossfade begins.
 
     setCursorPos({ x: '65vw', y: '90vh' }); // Start where Scene 3 left off
@@ -51,7 +51,7 @@ export function Scene4({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
     }, 4000);
 
     const t6 = setTimeout(() => {
-      setCursorPos({ x: '40vw', y: '65vh' }); // Move to Ratios row
+      setCursorPos({ x: '40vw', y: '65vh' }); // Move to mastery row
     }, 6000);
 
     const t7 = setTimeout(() => {
@@ -71,11 +71,11 @@ export function Scene4({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
   }, [setCursorPos, setIsClicking]);
 
   const rows = [
-    { topic: 'Number sense', week: 'Week 1', att: 0, acc: 0, stat: 'UNTESTED', statColor: 'text-muted-foreground bg-muted' },
-    { topic: 'Fractions, decimals, and percents', week: 'Week 1', att: 1, acc: 1, stat: 'STRONG', statColor: 'text-emerald-700 bg-emerald-50' },
-    { topic: 'Ratios and proportions', week: 'Week 1', att: 1, acc: 1, stat: 'STRONG', statColor: 'text-emerald-700 bg-emerald-50' },
-    { topic: 'Unit conversions', week: 'Week 1', att: 0, acc: 0, stat: 'UNTESTED', statColor: 'text-muted-foreground bg-muted' },
-    { topic: 'Order of operations', week: 'Week 1', att: 0, acc: 0, stat: 'UNTESTED', statColor: 'text-muted-foreground bg-muted' },
+    { topic: 'What is ethics?', week: 'Unit 1', att: 0, acc: 0, stat: 'UNTESTED', statColor: 'text-muted-foreground bg-muted' },
+    { topic: 'Intrinsic vs. instrumental goodness', week: 'Unit 1', att: 1, acc: 1, stat: 'STRONG', statColor: 'text-emerald-700 bg-emerald-50' },
+    { topic: 'Commendableness and moral worth', week: 'Unit 1', att: 1, acc: 1, stat: 'STRONG', statColor: 'text-emerald-700 bg-emerald-50' },
+    { topic: 'Non-privative attributes of value', week: 'Unit 1', att: 0, acc: 0, stat: 'UNTESTED', statColor: 'text-muted-foreground bg-muted' },
+    { topic: 'Value and the limits of definition', week: 'Unit 1', att: 0, acc: 0, stat: 'UNTESTED', statColor: 'text-muted-foreground bg-muted' },
   ];
 
   return (
@@ -126,7 +126,7 @@ export function Scene4({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
               <div className="w-full">
                 <div className="grid grid-cols-12 gap-4 px-6 py-3 border-b border-border text-xs font-semibold text-muted-foreground uppercase tracking-wider bg-muted/20">
                   <div className="col-span-5">Topic</div>
-                  <div className="col-span-2">Week</div>
+                  <div className="col-span-2">Unit</div>
                   <div className="col-span-2">Attempts</div>
                   <div className="col-span-1">Accuracy</div>
                   <div className="col-span-2 text-right">Status</div>

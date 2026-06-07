@@ -18,24 +18,24 @@ const router: IRouter = Router();
 
 const WEEK_TITLES: Record<number, { title: string; summary: string }> = {
   1: {
-    title: "Week 1 — Foundations",
+    title: "Foundations of Value",
     summary:
-      "Number sense, fractions and percents, ratios, units, expressions, and linear equations.",
+      "Normative vs. descriptive, normative categories, instrumental and intrinsic goodness, commendableness, intrinsic badness, moral complexity, and non-privative attributes.",
   },
   2: {
-    title: "Week 2 — Functions and models",
+    title: "Obligation, Right, and Wrong",
     summary:
-      "Lines, systems, quadratics, exponentials, logs, modeling, inequalities.",
+      "The weight of obligations, outweighing vs. canceling, 'right' as least bad, 'wrong' as least good, 'ought' implies 'can', and legality vs. morality.",
   },
   3: {
-    title: "Week 3 — Statistics and probability",
+    title: "Acts, Agents, and Judgment",
     summary:
-      "Summarizing data, distributions, probability, inference, regression.",
+      "Judging an act vs. its status, act vs. agent, intention and attempts, the Hitler problem, immorality toward oneself, and autonomy.",
   },
   4: {
-    title: "Week 4 — Reasoning and capstone",
+    title: "Metaethics and Moral Truth",
     summary:
-      "Sets, logic, combinatorics, geometry, rates, finance, and the capstone.",
+      "Deriving 'ought' from 'is', Moore's open question, ampliative entailment, genetic vs. normative questions, moral truth vs. its uses, ethical realism, disagreement, and a capstone synthesis.",
   },
 };
 
@@ -124,7 +124,7 @@ router.get("/course/overview", async (_req, res) => {
 
   res.json(
     GetCourseOverviewResponse.parse({
-      title: "Quantitative Reasoning",
+      title: "Ethics",
       weeks,
       totals: { assignmentsCompleted, assignmentsTotal, practiceCount },
     }),

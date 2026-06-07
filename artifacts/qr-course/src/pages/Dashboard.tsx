@@ -17,7 +17,7 @@ export default function Dashboard() {
           <h1 className="text-3xl font-serif font-bold text-primary mb-2">
             {overview ? overview.title : <Skeleton className="h-9 w-64" />}
           </h1>
-          <p className="text-muted-foreground">Welcome to your Quantitative Reasoning workspace.</p>
+          <p className="text-muted-foreground">Welcome to your Ethics course workspace.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -59,7 +59,7 @@ export default function Dashboard() {
                 <Link key={week.weekNumber} href={`/weeks/${week.weekNumber}`}>
                   <Card className="hover:border-primary/50 transition-colors cursor-pointer cursor-pointer hover:shadow-sm">
                     <CardHeader>
-                      <CardTitle className="text-lg">Week {week.weekNumber}: {week.title}</CardTitle>
+                      <CardTitle className="text-lg">Unit {week.weekNumber}: {week.title}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-muted-foreground mb-4">{week.summary}</p>

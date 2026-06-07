@@ -8,11 +8,11 @@ export function Scene3({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
   const [phase, setPhase] = useState(0);
 
   useEffect(() => {
-    // 0-2.0s Cursor into textarea, types "Why is dividing by zero undefined?"
+    // 0-2.0s Cursor into textarea, types "Why isn't a normative claim just an opinion?"
     // 2.0-2.5s Cursor to send button, clicks.
     // 2.5-3.5s Pulsing dots.
     // 3.5-10s AI response streams.
-    // 10-12s Cursor types "What about limits?"
+    // 10-12s Cursor types "What about intrinsic value?"
 
     setCursorPos({ x: '60vw', y: '16vh' }); // Start at Tutor tab
     
@@ -57,11 +57,11 @@ export function Scene3({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
     >
       {/* Left Pane (Static from previous) */}
       <div className="w-1/2 h-full border-r border-border p-12 overflow-hidden flex flex-col relative opacity-50">
-        <div className="text-xs font-bold tracking-widest text-muted-foreground mb-4">WEEK 1</div>
-        <h1 className="text-3xl font-serif text-primary mb-8">1.1 Number sense and the real line</h1>
+        <div className="text-xs font-bold tracking-widest text-muted-foreground mb-4">UNIT 1</div>
+        <h1 className="text-3xl font-serif text-primary mb-8">1.1 What is ethics? Normative vs. descriptive</h1>
         <div className="prose prose-sm max-w-none text-foreground/80 space-y-6">
-          <h2 className="font-serif text-2xl text-primary">Number sense</h2>
-          <p>Quantitative reasoning starts with a clear sense of what numbers mean. A number isn't just a symbol on a page; it represents a quantity, a magnitude, a position on a line, or a relationship between things.</p>
+          <h2 className="font-serif text-2xl text-primary">Two kinds of statements</h2>
+          <p>Ethics starts with a clear distinction between two kinds of statements. A descriptive statement reports that something is the case; a normative statement expresses a value-judgment — that something is good or bad, right or wrong.</p>
         </div>
       </div>
 
@@ -79,7 +79,7 @@ export function Scene3({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
               <motion.div exit={{ opacity: 0, y: -20 }} className="mt-auto">
                 <div className="mb-4 text-xs font-semibold text-muted-foreground uppercase tracking-widest">Starter questions for this section</div>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  <div className="px-3 py-1.5 rounded-full border border-border text-sm text-primary bg-muted/30">Why does dividing by zero break things?</div>
+                  <div className="px-3 py-1.5 rounded-full border border-border text-sm text-primary bg-muted/30">Why isn't a normative claim just an opinion?</div>
                 </div>
               </motion.div>
             )}
@@ -90,7 +90,7 @@ export function Scene3({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
                 animate={{ opacity: 1, y: 0, scale: 1 }} 
                 className="self-end max-w-[85%] bg-primary text-white p-4 rounded-2xl rounded-tr-sm shadow-sm mt-auto"
               >
-                Why is dividing by zero undefined?
+                Why isn't a normative claim just an opinion?
               </motion.div>
             )}
 
@@ -110,7 +110,7 @@ export function Scene3({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
                 animate={{ opacity: 1, y: 0 }} 
                 className="self-start w-[85%] bg-muted/30 border border-border p-5 rounded-2xl rounded-tl-sm text-[15px] leading-relaxed shadow-sm"
               >
-                <StreamingText text="Great question. Division asks 'how many times does the divisor fit into the dividend?' If the divisor is 0, no number of zeros ever adds up to a nonzero dividend — and any number works for 0÷0. So we leave it undefined to keep arithmetic consistent." delay={0} />
+                <StreamingText text="Great question. A normative claim makes a value-judgment that something is good, bad, right, or wrong. Unlike a bare opinion, it can be supported with reasons and tested against principles — that's exactly what ethics studies: which value-judgments are justified, and why." delay={0} />
               </motion.div>
             )}
           </div>
@@ -118,9 +118,9 @@ export function Scene3({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
           <div className="mt-6 w-full min-h-24 border border-border rounded-xl bg-background p-3 flex items-end shadow-inner relative z-10">
             <div className="w-full flex justify-between items-center pr-2">
               <div className="text-foreground text-[15px] font-medium pl-2 relative w-full h-full flex items-center">
-                {phase === 1 && <TypewriterText text="Why is dividing by zero undefined?" speed={25} />}
-                {phase >= 2 && phase < 4 && <span className="text-muted-foreground font-normal">Ask a question about number sense...</span>}
-                {phase >= 4 && <TypewriterText text="What about limits?" speed={20} />}
+                {phase === 1 && <TypewriterText text="Why isn't a normative claim just an opinion?" speed={25} />}
+                {phase >= 2 && phase < 4 && <span className="text-muted-foreground font-normal">Ask a question about this section...</span>}
+                {phase >= 4 && <TypewriterText text="What about intrinsic value?" speed={20} />}
                 {((phase >= 1 && phase < 2) || phase >= 4) && (
                   <motion.div className="w-0.5 h-5 bg-primary ml-1" animate={{ opacity: [1, 0] }} transition={{ repeat: Infinity, duration: 0.8 }} />
                 )}

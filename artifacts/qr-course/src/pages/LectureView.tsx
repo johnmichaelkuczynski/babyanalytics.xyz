@@ -73,7 +73,7 @@ export default function LectureView() {
         <Link href={lecture ? `/weeks/${lecture.weekNumber}` : "/"}>
           <Button variant="ghost" className="-ml-2 text-muted-foreground hover:text-foreground">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Week {lecture?.weekNumber ?? ""}
+            Back to Unit {lecture?.weekNumber ?? ""}
           </Button>
         </Link>
       </div>
@@ -97,7 +97,7 @@ export default function LectureView() {
                 </h1>
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Week {lecture.weekNumber}
+                    Unit {lecture.weekNumber}
                   </div>
                   <div className="inline-flex rounded-md border border-border overflow-hidden text-xs">
                     {(["short", "medium", "long"] as const).map((lvl) => {

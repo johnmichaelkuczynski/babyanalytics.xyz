@@ -13,7 +13,7 @@ export function Scene5({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
     // 4.5-6.0s: Red pill streams explanation. Score 0/1.
     // 6.0-7.0s: Toast down.
     // 7.0-8.5s: Problem 2 streams.
-    // 8.5-10.5s: Cursor types "$3.00" via math keyboard.
+    // 8.5-10.5s: Cursor types the intrinsic-good answer into the answer box.
     // 10.5-11.5s: Cursor clicks Submit.
     // 11.5-14s: Green pill, toast up.
 
@@ -49,12 +49,12 @@ export function Scene5({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
     }, 7000);
 
     const t9 = setTimeout(() => {
-      setCursorPos({ x: '35vw', y: '82vh' }); // move to $ key
-      setTypedAnswer("$");
+      setCursorPos({ x: '35vw', y: '82vh' }); // move into answer box
+      setTypedAnswer("Pleasure");
     }, 8500);
-    const t10 = setTimeout(() => setTypedAnswer("$3"), 9000);
-    const t11 = setTimeout(() => setTypedAnswer("$3."), 9500);
-    const t12 = setTimeout(() => setTypedAnswer("$3.00"), 10000);
+    const t10 = setTimeout(() => setTypedAnswer("Pleasure — it is"), 9000);
+    const t11 = setTimeout(() => setTypedAnswer("Pleasure — it is valued for"), 9500);
+    const t12 = setTimeout(() => setTypedAnswer("Pleasure — it is valued for its own sake."), 10000);
 
     const t13 = setTimeout(() => {
       setCursorPos({ x: '70vw', y: '60vh' }); // Move to Submit
@@ -110,8 +110,8 @@ export function Scene5({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
         <div className="text-xs font-bold text-muted-foreground tracking-widest uppercase mb-4">Topic Practice</div>
         <div className="flex justify-between items-end mb-8">
           <div>
-            <h1 className="text-4xl font-serif text-primary mb-2">Ratios and proportions</h1>
-            <div className="text-sm text-muted-foreground">Week 1 · 1 prior attempt · 1% accuracy · <span className="text-emerald-600 font-semibold">STRONG</span></div>
+            <h1 className="text-4xl font-serif text-primary mb-2">Intrinsic vs. instrumental goodness</h1>
+            <div className="text-sm text-muted-foreground">Unit 1 · 1 prior attempt · 1% accuracy · <span className="text-emerald-600 font-semibold">STRONG</span></div>
           </div>
           <div className="text-sm font-medium border border-border px-3 py-1 rounded-md bg-white">
             Session score: {phase < 2 ? '0/0' : phase < 5 ? '0/1' : '1/2'}
@@ -126,10 +126,10 @@ export function Scene5({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
         <div className="bg-white border border-border rounded-xl shadow-sm overflow-hidden flex flex-col min-h-[400px]">
           <div className="p-8 flex-1 border-b border-border text-lg text-primary font-medium leading-relaxed">
             {phase >= 1 && phase < 4 && (
-              <StreamingText text="A recipe uses 3 cups of flour for every 2 cups of sugar. If you use 9 cups of flour, how many cups of sugar do you need?" delay={0} />
+              <StreamingText text="Is money intrinsically good or instrumentally good? Explain what makes it so." delay={0} />
             )}
             {phase >= 4 && (
-              <StreamingText text="If 4 pencils cost $1.20, how much do 10 pencils cost?" delay={0} />
+              <StreamingText text="Give one example of something widely held to be intrinsically good, and say why." delay={0} />
             )}
           </div>
           
@@ -159,7 +159,7 @@ export function Scene5({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
                     <span>Not quite</span>
                   </div>
                   <div className="text-sm text-red-900 leading-relaxed">
-                    <StreamingText text="The ratio 3:2 means for every 3 of flour, there are 2 of sugar. With 9 cups flour (3×3), you need 2×3 = 6 cups of sugar." delay={0} />
+                    <StreamingText text="Not quite. Money is instrumentally good — it is valued only as a means to other things it can buy, not for its own sake. Something intrinsically good is valued for itself." delay={0} />
                   </div>
                 </motion.div>
               )}
@@ -174,7 +174,7 @@ export function Scene5({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
                     <span>Correct!</span>
                   </div>
                   <div className="text-sm text-emerald-900 leading-relaxed">
-                    <StreamingText text="4 pencils = $1.20, so 1 pencil = $0.30. 10 × $0.30 = $3.00." delay={0} />
+                    <StreamingText text="Correct. Pleasure (or happiness) is a classic example of an intrinsic good — it is valued for its own sake, not as a means to something else." delay={0} />
                   </div>
                 </motion.div>
               )}
@@ -182,8 +182,8 @@ export function Scene5({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
 
             <div className="mt-4">
               <div className="flex space-x-2 border-b border-border pb-2 mb-3 overflow-x-auto text-xs font-medium">
-                <div className="px-3 py-1 border-b-2 border-primary text-primary">Algebra</div>
-                {['Statistics', 'Calculus', 'Discrete', 'SetTheory', 'Logic', 'Trig', 'Geometry'].map(t => (
+                <div className="px-3 py-1 border-b-2 border-primary text-primary">Value</div>
+                {['Obligation', 'Right & Wrong', 'Intention', 'Autonomy', 'Metaethics', 'Is/Ought', 'Realism'].map(t => (
                   <div key={t} className="px-3 py-1 text-muted-foreground">{t}</div>
                 ))}
               </div>

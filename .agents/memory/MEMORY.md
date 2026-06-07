@@ -1,0 +1,1 @@
+- [OpenAI integration env vars](openai-integration-env-vars.md) — this repo's OpenAI lib reads custom OPENAI_API_KEY / OPENAI_BASE_URL names; mismatched names fail at runtime.
