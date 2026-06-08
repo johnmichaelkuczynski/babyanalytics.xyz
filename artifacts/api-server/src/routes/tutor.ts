@@ -23,8 +23,16 @@ router.get("/tutor/suggestions/:lectureId", async (req, res): Promise<void> => {
 
   try {
     const out = await chatJson<{ questions: string[] }>(
-      'You are an encouraging college ethics tutor. Reply as strict JSON of the form {"questions": string[]} with NO other keys.',
-      `From the lecture below, generate 6 short, concrete starter questions a student might want to ask after reading it. Cover every major idea in the reading (not just the first one). Each question must be one sentence, under ~18 words, in the student's voice (e.g. "Why does ...?", "Can you show me ...?", "What's the difference between ...?"). Inline math uses $...$ if needed.\n\nLECTURE TITLE: ${lecture.title}\n\nLECTURE BODY:\n"""\n${lecture.body}\n"""`,
+      'You are a rigorous college ethics tutor writing study questions. Reply as strict JSON of the form {"questions": string[]} with NO other keys.',
+      `From the lecture below, write 6 starter questions a thoughtful student would ask to deepen their UNDERSTANDING of the material — questions that probe reasoning, distinctions, justification, or application, not trivia or recall.\n\n` +
+        `Cover several different major ideas in the reading (not just the first one).\n\n` +
+        `RULES FOR EVERY QUESTION — no exceptions:\n` +
+        `1. Be precise and well-formed. Do NOT presuppose a single answer when several exist. Never write "What is THE difference between X and Y?" when X and Y differ in several ways — instead ask "How do X and Y differ?" or "What distinguishes X from Y, and why does it matter for ethics?".\n` +
+        `2. Probe understanding, not memorization. Prefer "why", "how", "what follows if", "how would you decide", "what is an example of", "how does X relate to Y". Avoid yes/no questions and avoid questions answerable by quoting one sentence.\n` +
+        `3. Be specific to THIS lecture's actual concepts and examples — name them. No generic filler that could apply to any reading.\n` +
+        `4. One clear sentence each, roughly 8–22 words, in the student's own voice. No compound double-questions.\n` +
+        `5. Use $...$ for any inline math.\n\n` +
+        `Return exactly 6 questions.\n\nLECTURE TITLE: ${lecture.title}\n\nLECTURE BODY:\n"""\n${lecture.body}\n"""`,
       FAST_MODEL,
     );
     const questions = Array.isArray(out?.questions)
