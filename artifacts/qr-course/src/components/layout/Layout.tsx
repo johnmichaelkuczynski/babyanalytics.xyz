@@ -65,25 +65,55 @@ function TopBar() {
   const { user } = useUser();
   const [resetting, setResetting] = useState(false);
   const [expanding, setExpanding] = useState(false);
+  const [expandProgress, setExpandProgress] = useState<string | null>(null);
 
   async function handleExpandLectures() {
     setExpanding(true);
+    setExpandProgress("Loading lectures…");
     try {
-      const mRes = await fetch("/api/diagnostics/expand-lectures?level=medium", { method: "POST" });
-      if (!mRes.ok) throw new Error(`Medium expansion failed: HTTP ${mRes.status}`);
-      const mData = (await mRes.json()) as { updated?: number; failed?: number; total?: number };
-      const lRes = await fetch("/api/diagnostics/expand-lectures?level=long", { method: "POST" });
-      if (!lRes.ok) throw new Error(`Long expansion failed: HTTP ${lRes.status}`);
-      const lData = (await lRes.json()) as { updated?: number; failed?: number; total?: number };
+      // Fetch every lecture id so we can rewrite ONE lecture per request.
+      // A single bulk request that rewrites all lectures for both levels takes
+      // many minutes and gets killed by the proxy, so we drive it client-side
+      // with short (~30s) requests and live progress instead.
+      const ovRes = await fetch(`${basePath}/api/course/overview`);
+      if (!ovRes.ok) throw new Error(`HTTP ${ovRes.status}`);
+      const overview = (await ovRes.json()) as {
+        weeks: Array<{ lectures: Array<{ id: number }> }>;
+      };
+      const ids = overview.weeks.flatMap((w) => w.lectures.map((l) => l.id));
+      const jobs = ([...ids.map((id) => ({ id, level: "medium" as const })),
+        ...ids.map((id) => ({ id, level: "long" as const }))]);
+      const total = jobs.length;
+
+      let done = 0;
+      let failed = 0;
+      for (const job of jobs) {
+        done++;
+        setExpandProgress(`Rewriting ${done}/${total}…`);
+        try {
+          const res = await fetch(
+            `${basePath}/api/diagnostics/expand-lectures?level=${job.level}&id=${job.id}`,
+            { method: "POST" },
+          );
+          if (!res.ok) {
+            failed++;
+            continue;
+          }
+          const data = (await res.json()) as { updated?: number };
+          if (!data.updated) failed++;
+        } catch {
+          failed++;
+        }
+      }
       await qc.invalidateQueries();
       console.info(
-        `Lecture expansion — Medium: ${mData.updated ?? 0}/${mData.total ?? 0} (${mData.failed ?? 0} failed), ` +
-          `Long: ${lData.updated ?? 0}/${lData.total ?? 0} (${lData.failed ?? 0} failed)`,
+        `Lecture expansion complete — ${total - failed}/${total} succeeded (${failed} failed).`,
       );
     } catch (e) {
       console.error(`Lecture rewrite failed: ${(e as Error).message}`);
     } finally {
       setExpanding(false);
+      setExpandProgress(null);
     }
   }
 
@@ -111,7 +141,7 @@ function TopBar() {
         title="Rewrite every lecture with worked examples after each point"
       >
         <Sparkles className={`w-4 h-4 ${expanding ? "animate-pulse" : ""}`} />
-        {expanding ? "Rewriting…" : "Generate medium + long lectures"}
+        {expanding ? (expandProgress ?? "Rewriting…") : "Generate medium + long lectures"}
       </button>
       <button
         onClick={handleReset}

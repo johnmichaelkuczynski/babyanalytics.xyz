@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   useGetLecture,
   useAskTutor,
@@ -52,6 +53,9 @@ export default function LectureView() {
 
   const [tab, setTab] = useState<"tutor" | "practice">("tutor");
   const [level, setLevel] = useState<"short" | "medium" | "long">("short");
+  const qc = useQueryClient();
+  const [generating, setGenerating] = useState<"medium" | "long" | null>(null);
+  const [genError, setGenError] = useState<string | null>(null);
 
   const availableLevels = useMemo(() => {
     const out: Array<"short" | "medium" | "long"> = ["short"];
@@ -59,6 +63,31 @@ export default function LectureView() {
     if (lecture?.bodyLong) out.push("long");
     return out;
   }, [lecture?.bodyMedium, lecture?.bodyLong]);
+
+  async function generateLevel(target: "medium" | "long") {
+    if (!lecture || generating) return;
+    setGenError(null);
+    setGenerating(target);
+    try {
+      const res = await fetch(
+        `${import.meta.env.BASE_URL}api/diagnostics/expand-lectures?level=${target}&id=${lecture.id}`,
+        { method: "POST" },
+      );
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = (await res.json()) as { updated?: number; failed?: number };
+      if (!data.updated) {
+        throw new Error("The model returned an unusable rewrite — please try again.");
+      }
+      await qc.invalidateQueries();
+      setLevel(target);
+    } catch (e) {
+      setGenError(
+        `Could not generate the ${target} version: ${(e as Error).message}`,
+      );
+    } finally {
+      setGenerating(null);
+    }
+  }
 
   const activeBody =
     level === "long" && lecture?.bodyLong
@@ -103,32 +132,66 @@ export default function LectureView() {
                     {(["short", "medium", "long"] as const).map((lvl) => {
                       const enabled = availableLevels.includes(lvl);
                       const active = level === lvl;
+                      const isGenerating =
+                        lvl !== "short" && generating === lvl;
+                      const onClick = () => {
+                        if (generating) return;
+                        if (enabled) {
+                          setLevel(lvl);
+                        } else if (lvl !== "short") {
+                          generateLevel(lvl);
+                        }
+                      };
                       return (
                         <button
                           key={lvl}
-                          onClick={() => enabled && setLevel(lvl)}
-                          disabled={!enabled}
+                          onClick={onClick}
+                          disabled={!!generating}
                           title={
                             enabled
                               ? `${lvl[0].toUpperCase() + lvl.slice(1)} version`
-                              : `${lvl[0].toUpperCase() + lvl.slice(1)} version not generated yet — click "Generate medium + long lectures" in the top bar`
+                              : `Generate the ${lvl} version of this lecture (takes ~30 seconds)`
                           }
-                          className={`px-3 py-1.5 font-medium uppercase tracking-wider transition-colors ${
+                          className={`px-3 py-1.5 font-medium uppercase tracking-wider transition-colors disabled:opacity-60 ${
                             active
                               ? "bg-primary text-primary-foreground"
                               : enabled
                                 ? "bg-background hover:bg-secondary text-foreground"
-                                : "bg-background/50 text-muted-foreground/50 cursor-not-allowed"
+                                : "bg-background hover:bg-secondary text-muted-foreground"
                           }`}
                           data-testid={`button-level-${lvl}`}
                         >
-                          {lvl}
+                          {isGenerating ? (
+                            <span className="inline-flex items-center gap-1">
+                              <RefreshCw className="w-3 h-3 animate-spin" />
+                              {lvl}…
+                            </span>
+                          ) : !enabled && lvl !== "short" ? (
+                            <span className="inline-flex items-center gap-1">
+                              <Sparkles className="w-3 h-3" />
+                              {lvl}
+                            </span>
+                          ) : (
+                            lvl
+                          )}
                         </button>
                       );
                     })}
                   </div>
                 </div>
               </header>
+              {genError && (
+                <div className="mb-3 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800">
+                  {genError}
+                </div>
+              )}
+              {generating && (
+                <div className="mb-3 rounded-md border border-chart-2/40 bg-chart-2/5 px-3 py-2 text-sm text-foreground inline-flex items-center gap-2">
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  Writing the {generating} version of this lecture — about 30
+                  seconds. You can keep reading the short version meanwhile.
+                </div>
+              )}
               <div className="bg-card border shadow-sm rounded-lg p-6 md:p-8" ref={articleRef}>
                 <MarkdownRenderer content={activeBody} />
                 <div className="mt-6 pt-4 border-t border-dashed border-border text-xs text-muted-foreground italic">
