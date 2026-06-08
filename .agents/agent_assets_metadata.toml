@@ -12,3 +12,9 @@ id = "zpoa4kJaFwLQ67_UaLoks"
 uri = "file://BLUEPRINT.md"
 type = "text"
 title = "QuantReason — App Blueprint"
+
+[[outputs]]
+id = "gBlmXbiu3K5FNCNv2fX9f"
+uri = "file://README.md"
+type = "text"
+title = "EthosReason README"
