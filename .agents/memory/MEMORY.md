@@ -5,3 +5,4 @@
 - [Course content reseed](course-content-reseed.md) — seeded data migrations must self-heal via a content marker + replace-in-transaction; "seed if empty" strands old content in existing/prod DBs (prod writes are read-only).
 - [DATABASE_URL override](database-url-override.md) — app DB resolves to platform `helium/heliumdb`, which overrides a user-set DATABASE_URL secret; checkDatabase() can report "not provisioned" while the app still has a working DB.
 - [video-js scaffold gotchas](video-js-scaffold-gotchas.md) — fresh video builds break on sceneTransitions named-import, font @import order, and tsconfig missing dom lib; fix before post-build steps.
+- [Orval request-body naming](orval-request-body-naming.md) — name OpenAPI requestBody component schemas `*Input`, never `<OperationId>Body`, or the zod barrel collides with orval's generated operation-body symbol.

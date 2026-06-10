@@ -23,4 +23,14 @@ export interface Lecture {
      * @nullable
      */
   bodyLong?: string | null;
+  /**
+     * A reader-directed rewrite of the lecture produced from the student's own instruction (e.g. add more examples, illustrate a principle, shorter sentences). Null until the student requests a rewrite.
+     * @nullable
+     */
+  bodyCustom?: string | null;
+  /**
+     * The most recent instruction the student gave to produce bodyCustom. Null when there is no custom rewrite.
+     * @nullable
+     */
+  customInstruction?: string | null;
 }

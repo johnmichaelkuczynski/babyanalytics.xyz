@@ -35,6 +35,16 @@ export interface Lecture {
      * @nullable
      */
   bodyLong?: string | null;
+  /**
+     * A reader-directed rewrite of the lecture produced from the student's own instruction (e.g. add more examples, illustrate a principle, shorter sentences). Null until the student requests a rewrite.
+     * @nullable
+     */
+  bodyCustom?: string | null;
+  /**
+     * The most recent instruction the student gave to produce bodyCustom. Null when there is no custom rewrite.
+     * @nullable
+     */
+  customInstruction?: string | null;
 }
 
 export interface LectureRef {
@@ -577,6 +587,30 @@ export interface ReasoningResponseInput {
      * @nullable
      */
   ranking?: number[] | null;
+}
+
+/**
+ * Which version of the lecture to rewrite from. Defaults to "short". Use "custom" to refine an existing rewrite further.
+ */
+export type RewriteLectureInputBaseLevel = typeof RewriteLectureInputBaseLevel[keyof typeof RewriteLectureInputBaseLevel];
+
+
+export const RewriteLectureInputBaseLevel = {
+  short: 'short',
+  medium: 'medium',
+  long: 'long',
+  custom: 'custom',
+} as const;
+
+export interface RewriteLectureInput {
+  /**
+     * The student's plain-language instruction for how to rewrite the lecture (e.g. "add more examples to the section on intrinsic goodness", "use shorter sentences", "illustrate the open-question argument with a concrete case").
+     * @minLength 1
+     * @maxLength 1000
+     */
+  instruction: string;
+  /** Which version of the lecture to rewrite from. Defaults to "short". Use "custom" to refine an existing rewrite further. */
+  baseLevel?: RewriteLectureInputBaseLevel;
 }
 
 export interface StartReasoningBody {

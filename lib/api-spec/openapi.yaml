@@ -87,6 +87,51 @@ paths:
               schema:
                 $ref: "#/components/schemas/Lecture"
 
+  /course/lectures/{lectureId}/rewrite:
+    post:
+      operationId: rewriteLecture
+      tags: [course]
+      summary: Rewrite the lecture from the student's own instruction
+      description: >-
+        Produces a reader-directed rewrite of the lecture (e.g. more examples on
+        a point, a clearer illustration of a principle, shorter sentences) while
+        preserving every concept and learning objective. Persists the result as
+        the lecture's custom version and returns the updated lecture.
+      parameters:
+        - name: lectureId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RewriteLectureInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lecture"
+    delete:
+      operationId: clearLectureRewrite
+      tags: [course]
+      summary: Discard the custom rewrite and revert to the original lecture
+      parameters:
+        - name: lectureId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lecture"
+
   /course/topics:
     get:
       operationId: listTopics
@@ -570,6 +615,12 @@ components:
         bodyLong:
           type: ["string", "null"]
           description: Long version with the most explanation and the most examples. Null if not yet generated.
+        bodyCustom:
+          type: ["string", "null"]
+          description: A reader-directed rewrite of the lecture produced from the student's own instruction (e.g. add more examples, illustrate a principle, shorter sentences). Null until the student requests a rewrite.
+        customInstruction:
+          type: ["string", "null"]
+          description: The most recent instruction the student gave to produce bodyCustom. Null when there is no custom rewrite.
 
     Week:
       type: object
@@ -1094,6 +1145,20 @@ components:
           type: ["array", "null"]
           items: { type: integer }
           description: dilemma — consideration indices ranked most-important first.
+
+    RewriteLectureInput:
+      type: object
+      required: [instruction]
+      properties:
+        instruction:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          description: The student's plain-language instruction for how to rewrite the lecture (e.g. "add more examples to the section on intrinsic goodness", "use shorter sentences", "illustrate the open-question argument with a concrete case").
+        baseLevel:
+          type: string
+          enum: [short, medium, long, custom]
+          description: Which version of the lecture to rewrite from. Defaults to "short". Use "custom" to refine an existing rewrite further.
 
     StartReasoningBody:
       type: object

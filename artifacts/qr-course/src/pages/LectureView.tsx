@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   useGetLecture,
+  useRewriteLecture,
+  useClearLectureRewrite,
   useAskTutor,
   useStartPracticeSession,
   useNextPracticeProblem,
@@ -17,7 +19,7 @@ import { MarkdownRenderer } from "@/components/MarkdownRenderer";
 import { AnswerInput } from "@/components/AnswerInput";
 import { StarterQuestionCard } from "@/components/StarterQuestionCard";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MessageSquare, Sparkles, Send, X, RefreshCw, CheckCircle2, XCircle } from "lucide-react";
+import { ArrowLeft, MessageSquare, Sparkles, Send, X, RefreshCw, CheckCircle2, XCircle, Wand2, RotateCcw } from "lucide-react";
 
 type ChatMsg = { role: "user" | "tutor"; text: string };
 
@@ -52,17 +54,72 @@ export default function LectureView() {
   }, []);
 
   const [tab, setTab] = useState<"tutor" | "practice">("tutor");
-  const [level, setLevel] = useState<"short" | "medium" | "long">("short");
+  const [level, setLevel] = useState<"short" | "medium" | "long" | "custom">("short");
   const qc = useQueryClient();
   const [generating, setGenerating] = useState<"medium" | "long" | null>(null);
   const [genError, setGenError] = useState<string | null>(null);
 
+  // Reader-directed rewrite ("rewrite this lecture to …")
+  const rewrite = useRewriteLecture();
+  const clearRewrite = useClearLectureRewrite();
+  const [rewriteOpen, setRewriteOpen] = useState(false);
+  const [rewriteText, setRewriteText] = useState("");
+  const [rewriteError, setRewriteError] = useState<string | null>(null);
+
+  const REWRITE_PRESETS = [
+    "Use shorter, simpler sentences",
+    "Add more examples to the hardest section",
+    "Illustrate the key principle with a concrete case",
+    "Explain it like I'm new to philosophy",
+  ];
+
+  async function submitRewrite() {
+    if (!lecture) return;
+    const instruction = rewriteText.trim();
+    if (!instruction) return;
+    setRewriteError(null);
+    try {
+      await rewrite.mutateAsync({
+        lectureId: lecture.id,
+        data: { instruction, baseLevel: level },
+      });
+      await qc.invalidateQueries();
+      setLevel("custom");
+      setRewriteText("");
+      setRewriteOpen(false);
+    } catch (e) {
+      setRewriteError(
+        `Could not rewrite the lecture: ${(e as Error).message}. Try rephrasing your instruction.`,
+      );
+    }
+  }
+
+  async function revertRewrite() {
+    if (!lecture) return;
+    setRewriteError(null);
+    try {
+      await clearRewrite.mutateAsync({ lectureId: lecture.id });
+      await qc.invalidateQueries();
+      setLevel("short");
+      setRewriteOpen(false);
+    } catch (e) {
+      setRewriteError(`Could not revert: ${(e as Error).message}`);
+    }
+  }
+
   const availableLevels = useMemo(() => {
-    const out: Array<"short" | "medium" | "long"> = ["short"];
+    const out: Array<"short" | "medium" | "long" | "custom"> = ["short"];
     if (lecture?.bodyMedium) out.push("medium");
     if (lecture?.bodyLong) out.push("long");
+    if (lecture?.bodyCustom) out.push("custom");
     return out;
-  }, [lecture?.bodyMedium, lecture?.bodyLong]);
+  }, [lecture?.bodyMedium, lecture?.bodyLong, lecture?.bodyCustom]);
+
+  // When a fresh custom rewrite lands, surface it automatically.
+  useEffect(() => {
+    if (lecture?.bodyCustom) setLevel("custom");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lecture?.id]);
 
   async function generateLevel(target: "medium" | "long") {
     if (!lecture || generating) return;
@@ -90,11 +147,13 @@ export default function LectureView() {
   }
 
   const activeBody =
-    level === "long" && lecture?.bodyLong
-      ? lecture.bodyLong
-      : level === "medium" && lecture?.bodyMedium
-        ? lecture.bodyMedium
-        : (lecture?.body ?? "");
+    level === "custom" && lecture?.bodyCustom
+      ? lecture.bodyCustom
+      : level === "long" && lecture?.bodyLong
+        ? lecture.bodyLong
+        : level === "medium" && lecture?.bodyMedium
+          ? lecture.bodyMedium
+          : (lecture?.body ?? "");
 
   return (
     <Layout>
@@ -128,58 +187,187 @@ export default function LectureView() {
                   <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Unit {lecture.weekNumber}
                   </div>
-                  <div className="inline-flex rounded-md border border-border overflow-hidden text-xs">
-                    {(["short", "medium", "long"] as const).map((lvl) => {
-                      const enabled = availableLevels.includes(lvl);
-                      const active = level === lvl;
-                      const isGenerating =
-                        lvl !== "short" && generating === lvl;
-                      const onClick = () => {
-                        if (generating) return;
-                        if (enabled) {
-                          setLevel(lvl);
-                        } else if (lvl !== "short") {
-                          generateLevel(lvl);
-                        }
-                      };
-                      return (
-                        <button
-                          key={lvl}
-                          onClick={onClick}
-                          disabled={!!generating}
-                          title={
-                            enabled
-                              ? `${lvl[0].toUpperCase() + lvl.slice(1)} version`
-                              : `Generate the ${lvl} version of this lecture (takes ~30 seconds)`
+                  <div className="flex items-center gap-2">
+                    <div className="inline-flex rounded-md border border-border overflow-hidden text-xs">
+                      {(["short", "medium", "long", "custom"] as const).map((lvl) => {
+                        // The custom pill only exists once a rewrite has been made.
+                        if (lvl === "custom" && !lecture.bodyCustom) return null;
+                        const enabled = availableLevels.includes(lvl);
+                        const active = level === lvl;
+                        const isGenerating =
+                          (lvl === "medium" || lvl === "long") && generating === lvl;
+                        const onClick = () => {
+                          if (generating) return;
+                          if (enabled) {
+                            setLevel(lvl);
+                          } else if (lvl === "medium" || lvl === "long") {
+                            generateLevel(lvl);
                           }
-                          className={`px-3 py-1.5 font-medium uppercase tracking-wider transition-colors disabled:opacity-60 ${
-                            active
-                              ? "bg-primary text-primary-foreground"
-                              : enabled
-                                ? "bg-background hover:bg-secondary text-foreground"
-                                : "bg-background hover:bg-secondary text-muted-foreground"
-                          }`}
-                          data-testid={`button-level-${lvl}`}
-                        >
-                          {isGenerating ? (
-                            <span className="inline-flex items-center gap-1">
-                              <RefreshCw className="w-3 h-3 animate-spin" />
-                              {lvl}…
-                            </span>
-                          ) : !enabled && lvl !== "short" ? (
-                            <span className="inline-flex items-center gap-1">
-                              <Sparkles className="w-3 h-3" />
-                              {lvl}
-                            </span>
-                          ) : (
-                            lvl
-                          )}
-                        </button>
-                      );
-                    })}
+                        };
+                        return (
+                          <button
+                            key={lvl}
+                            onClick={onClick}
+                            disabled={!!generating}
+                            title={
+                              lvl === "custom"
+                                ? "Your rewritten version"
+                                : enabled
+                                  ? `${lvl[0].toUpperCase() + lvl.slice(1)} version`
+                                  : `Generate the ${lvl} version of this lecture (takes ~30 seconds)`
+                            }
+                            className={`px-3 py-1.5 font-medium uppercase tracking-wider transition-colors disabled:opacity-60 ${
+                              active
+                                ? "bg-primary text-primary-foreground"
+                                : enabled
+                                  ? "bg-background hover:bg-secondary text-foreground"
+                                  : "bg-background hover:bg-secondary text-muted-foreground"
+                            }`}
+                            data-testid={`button-level-${lvl}`}
+                          >
+                            {isGenerating ? (
+                              <span className="inline-flex items-center gap-1">
+                                <RefreshCw className="w-3 h-3 animate-spin" />
+                                {lvl}…
+                              </span>
+                            ) : lvl === "custom" ? (
+                              <span className="inline-flex items-center gap-1">
+                                <Wand2 className="w-3 h-3" />
+                                yours
+                              </span>
+                            ) : !enabled && lvl !== "short" ? (
+                              <span className="inline-flex items-center gap-1">
+                                <Sparkles className="w-3 h-3" />
+                                {lvl}
+                              </span>
+                            ) : (
+                              lvl
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <Button
+                      size="sm"
+                      variant={rewriteOpen ? "secondary" : "outline"}
+                      className="h-8 text-xs"
+                      onClick={() => {
+                        setRewriteError(null);
+                        setRewriteOpen((o) => !o);
+                      }}
+                      data-testid="button-rewrite-toggle"
+                    >
+                      <Wand2 className="w-3.5 h-3.5 mr-1.5" />
+                      Rewrite this lecture
+                    </Button>
                   </div>
                 </div>
               </header>
+
+              {rewriteOpen && (
+                <div className="mb-4 rounded-lg border border-primary/30 bg-primary/5 p-4">
+                  <div className="text-sm font-semibold text-foreground mb-1 inline-flex items-center gap-2">
+                    <Wand2 className="w-4 h-4 text-primary" />
+                    Rewrite this lecture your way
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    Tell the course how to rewrite this lecture — add more
+                    examples on a point, illustrate a principle more clearly, use
+                    shorter sentences. It keeps every concept, just presented your
+                    way. Rewrites from the{" "}
+                    <span className="font-medium uppercase">{level}</span> version
+                    you're reading now.
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {REWRITE_PRESETS.map((p) => (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => setRewriteText(p)}
+                        disabled={rewrite.isPending}
+                        className="text-xs px-2.5 py-1 rounded-full border border-border bg-background hover:bg-secondary text-foreground disabled:opacity-60"
+                        data-testid="button-rewrite-preset"
+                      >
+                        {p}
+                      </button>
+                    ))}
+                  </div>
+                  <textarea
+                    value={rewriteText}
+                    onChange={(e) => setRewriteText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+                        e.preventDefault();
+                        submitRewrite();
+                      }
+                    }}
+                    placeholder="e.g. Add two more worked examples to the section on intrinsic vs. instrumental goodness, and use shorter sentences throughout."
+                    rows={3}
+                    maxLength={1000}
+                    disabled={rewrite.isPending}
+                    className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary resize-y disabled:opacity-60"
+                    data-testid="input-rewrite-instruction"
+                  />
+                  <div className="flex items-center gap-2 mt-3">
+                    <Button
+                      size="sm"
+                      onClick={submitRewrite}
+                      disabled={!rewriteText.trim() || rewrite.isPending}
+                      data-testid="button-rewrite-submit"
+                    >
+                      {rewrite.isPending ? (
+                        <span className="inline-flex items-center gap-1.5">
+                          <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                          Rewriting…
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5">
+                          <Wand2 className="w-3.5 h-3.5" />
+                          {lecture.bodyCustom ? "Refine again" : "Rewrite"}
+                        </span>
+                      )}
+                    </Button>
+                    {lecture.bodyCustom && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={revertRewrite}
+                        disabled={rewrite.isPending || clearRewrite.isPending}
+                        data-testid="button-rewrite-revert"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
+                        Revert to original
+                      </Button>
+                    )}
+                    <span className="text-[11px] text-muted-foreground ml-auto">
+                      ⌘/Ctrl + Enter
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {lecture.customInstruction && level === "custom" && !rewriteOpen && (
+                <div className="mb-3 rounded-md border border-primary/30 bg-primary/5 px-3 py-2 text-xs text-foreground flex items-center gap-2">
+                  <Wand2 className="w-3.5 h-3.5 text-primary shrink-0" />
+                  <span className="flex-1">
+                    Showing your rewrite:{" "}
+                    <span className="italic">"{lecture.customInstruction}"</span>
+                  </span>
+                  <button
+                    onClick={revertRewrite}
+                    disabled={clearRewrite.isPending}
+                    className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 disabled:opacity-60"
+                    data-testid="button-rewrite-revert-inline"
+                  >
+                    <RotateCcw className="w-3 h-3" /> revert
+                  </button>
+                </div>
+              )}
+              {rewriteError && (
+                <div className="mb-3 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800">
+                  {rewriteError}
+                </div>
+              )}
               {genError && (
                 <div className="mb-3 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800">
                   {genError}

@@ -38,6 +38,8 @@ export const lecturesTable = pgTable("lectures", {
   body: text("body").notNull(),
   bodyMedium: text("body_medium"),
   bodyLong: text("body_long"),
+  bodyCustom: text("body_custom"),
+  customInstruction: text("custom_instruction"),
 });
 
 export const assignmentsTable = pgTable("assignments", {

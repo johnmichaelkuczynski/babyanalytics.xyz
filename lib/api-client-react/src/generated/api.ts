@@ -50,6 +50,7 @@ import type {
   ReasoningAssessmentSummary,
   ReasoningAttemptState,
   ReasoningResult,
+  RewriteLectureInput,
   StartReasoningBody,
   SubmitAttemptInput,
   SubmitReasoningBody,
@@ -379,6 +380,149 @@ export function useGetLecture<TData = Awaited<ReturnType<typeof getLecture>>, TE
 
 
 
+
+export const getRewriteLectureUrl = (lectureId: number,) => {
+
+
+
+
+  return `/api/course/lectures/${lectureId}/rewrite`
+}
+
+/**
+ * Produces a reader-directed rewrite of the lecture (e.g. more examples on a point, a clearer illustration of a principle, shorter sentences) while preserving every concept and learning objective. Persists the result as the lecture's custom version and returns the updated lecture.
+ * @summary Rewrite the lecture from the student's own instruction
+ */
+export const rewriteLecture = async (lectureId: number,
+    rewriteLectureInput: RewriteLectureInput, options?: RequestInit): Promise<Lecture> => {
+
+  return customFetch<Lecture>(getRewriteLectureUrl(lectureId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      rewriteLectureInput,)
+  }
+);}
+
+
+
+
+export const getRewriteLectureMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof rewriteLecture>>, TError,{lectureId: number;data: BodyType<RewriteLectureInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof rewriteLecture>>, TError,{lectureId: number;data: BodyType<RewriteLectureInput>}, TContext> => {
+
+const mutationKey = ['rewriteLecture'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof rewriteLecture>>, {lectureId: number;data: BodyType<RewriteLectureInput>}> = (props) => {
+          const {lectureId,data} = props ?? {};
+
+          return  rewriteLecture(lectureId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RewriteLectureMutationResult = NonNullable<Awaited<ReturnType<typeof rewriteLecture>>>
+    export type RewriteLectureMutationBody = BodyType<RewriteLectureInput>
+    export type RewriteLectureMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Rewrite the lecture from the student's own instruction
+ */
+export const useRewriteLecture = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof rewriteLecture>>, TError,{lectureId: number;data: BodyType<RewriteLectureInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof rewriteLecture>>,
+        TError,
+        {lectureId: number;data: BodyType<RewriteLectureInput>},
+        TContext
+      > => {
+      return useMutation(getRewriteLectureMutationOptions(options));
+    }
+
+export const getClearLectureRewriteUrl = (lectureId: number,) => {
+
+
+
+
+  return `/api/course/lectures/${lectureId}/rewrite`
+}
+
+/**
+ * @summary Discard the custom rewrite and revert to the original lecture
+ */
+export const clearLectureRewrite = async (lectureId: number, options?: RequestInit): Promise<Lecture> => {
+
+  return customFetch<Lecture>(getClearLectureRewriteUrl(lectureId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getClearLectureRewriteMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof clearLectureRewrite>>, TError,{lectureId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof clearLectureRewrite>>, TError,{lectureId: number}, TContext> => {
+
+const mutationKey = ['clearLectureRewrite'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof clearLectureRewrite>>, {lectureId: number}> = (props) => {
+          const {lectureId} = props ?? {};
+
+          return  clearLectureRewrite(lectureId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ClearLectureRewriteMutationResult = NonNullable<Awaited<ReturnType<typeof clearLectureRewrite>>>
+
+    export type ClearLectureRewriteMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Discard the custom rewrite and revert to the original lecture
+ */
+export const useClearLectureRewrite = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof clearLectureRewrite>>, TError,{lectureId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof clearLectureRewrite>>,
+        TError,
+        {lectureId: number},
+        TContext
+      > => {
+      return useMutation(getClearLectureRewriteMutationOptions(options));
+    }
 
 export const getListTopicsUrl = () => {
 

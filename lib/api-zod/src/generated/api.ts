@@ -100,7 +100,59 @@ export const GetLectureResponse = zod.object({
   "weekNumber": zod.number(),
   "body": zod.string().describe('Short Markdown lecture text (the baseline \/ minimum-detail version). The frontend lets users select passages and send them to the tutor.'),
   "bodyMedium": zod.string().nullish().describe('Medium-length version with more explanation and more examples. Null if not yet generated.'),
-  "bodyLong": zod.string().nullish().describe('Long version with the most explanation and the most examples. Null if not yet generated.')
+  "bodyLong": zod.string().nullish().describe('Long version with the most explanation and the most examples. Null if not yet generated.'),
+  "bodyCustom": zod.string().nullish().describe('A reader-directed rewrite of the lecture produced from the student\'s own instruction (e.g. add more examples, illustrate a principle, shorter sentences). Null until the student requests a rewrite.'),
+  "customInstruction": zod.string().nullish().describe('The most recent instruction the student gave to produce bodyCustom. Null when there is no custom rewrite.')
+})
+
+
+/**
+ * Produces a reader-directed rewrite of the lecture (e.g. more examples on a point, a clearer illustration of a principle, shorter sentences) while preserving every concept and learning objective. Persists the result as the lecture's custom version and returns the updated lecture.
+ * @summary Rewrite the lecture from the student's own instruction
+ */
+export const RewriteLectureParams = zod.object({
+  "lectureId": zod.coerce.number()
+})
+
+export const rewriteLectureBodyInstructionMax = 1000;
+
+
+
+export const RewriteLectureBody = zod.object({
+  "instruction": zod.string().min(1).max(rewriteLectureBodyInstructionMax).describe('The student\'s plain-language instruction for how to rewrite the lecture (e.g. \"add more examples to the section on intrinsic goodness\", \"use shorter sentences\", \"illustrate the open-question argument with a concrete case\").'),
+  "baseLevel": zod.enum(['short', 'medium', 'long', 'custom']).optional().describe('Which version of the lecture to rewrite from. Defaults to \"short\". Use \"custom\" to refine an existing rewrite further.')
+})
+
+export const RewriteLectureResponse = zod.object({
+  "id": zod.number(),
+  "topicId": zod.number(),
+  "title": zod.string(),
+  "weekNumber": zod.number(),
+  "body": zod.string().describe('Short Markdown lecture text (the baseline \/ minimum-detail version). The frontend lets users select passages and send them to the tutor.'),
+  "bodyMedium": zod.string().nullish().describe('Medium-length version with more explanation and more examples. Null if not yet generated.'),
+  "bodyLong": zod.string().nullish().describe('Long version with the most explanation and the most examples. Null if not yet generated.'),
+  "bodyCustom": zod.string().nullish().describe('A reader-directed rewrite of the lecture produced from the student\'s own instruction (e.g. add more examples, illustrate a principle, shorter sentences). Null until the student requests a rewrite.'),
+  "customInstruction": zod.string().nullish().describe('The most recent instruction the student gave to produce bodyCustom. Null when there is no custom rewrite.')
+})
+
+
+/**
+ * @summary Discard the custom rewrite and revert to the original lecture
+ */
+export const ClearLectureRewriteParams = zod.object({
+  "lectureId": zod.coerce.number()
+})
+
+export const ClearLectureRewriteResponse = zod.object({
+  "id": zod.number(),
+  "topicId": zod.number(),
+  "title": zod.string(),
+  "weekNumber": zod.number(),
+  "body": zod.string().describe('Short Markdown lecture text (the baseline \/ minimum-detail version). The frontend lets users select passages and send them to the tutor.'),
+  "bodyMedium": zod.string().nullish().describe('Medium-length version with more explanation and more examples. Null if not yet generated.'),
+  "bodyLong": zod.string().nullish().describe('Long version with the most explanation and the most examples. Null if not yet generated.'),
+  "bodyCustom": zod.string().nullish().describe('A reader-directed rewrite of the lecture produced from the student\'s own instruction (e.g. add more examples, illustrate a principle, shorter sentences). Null until the student requests a rewrite.'),
+  "customInstruction": zod.string().nullish().describe('The most recent instruction the student gave to produce bodyCustom. Null when there is no custom rewrite.')
 })
 
 
