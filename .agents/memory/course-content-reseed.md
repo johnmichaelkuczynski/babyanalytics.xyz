@@ -18,3 +18,5 @@ Course content (topics/lectures/assignments/problems) is **data rows** seeded by
 **Tradeoff:** a version bump TRUNCATEs student-progress tables too. Acceptable for a single-user/self-paced course; reconsider if multi-user.
 
 **Why:** seeded reference data that changes *meaning* (not just shape) silently rots in existing/prod DBs unless the reseed is gated on a version, not just emptiness or a marker.
+
+**Curriculum-size coupling:** the number of topics/units is hardcoded in places beyond the seed — the system diagnostic asserts a minimum topic count, and the course overview route iterates a fixed week list and bounds `weekNumber` validation. When you change how many topics/units the curriculum has, update these in lockstep or the operator diagnostic false-fails and overview leaks phantom units.

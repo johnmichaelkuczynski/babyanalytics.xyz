@@ -64,7 +64,7 @@ export function Scene2({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
       {/* Left Pane: Lecture Content */}
       <div className="w-1/2 h-full border-r border-border p-12 overflow-hidden flex flex-col relative">
         <div className="text-xs font-bold tracking-widest text-muted-foreground mb-4">UNIT 1</div>
-        <h1 className="text-3xl font-serif text-primary mb-8">1.1 What is ethics? Normative vs. descriptive</h1>
+        <h1 className="text-3xl font-serif text-primary mb-8">1.1 What data analytics is and the workflow</h1>
         
         <div className="flex bg-muted/50 rounded-lg p-1 w-fit mb-10 border border-border">
           <div className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${phase < 1 ? 'bg-white shadow-sm text-primary' : 'text-muted-foreground'}`}>Short</div>
@@ -73,12 +73,12 @@ export function Scene2({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
         </div>
 
         <div className="prose prose-sm max-w-none text-foreground/80 space-y-6">
-          <h2 className="font-serif text-2xl text-primary">Two kinds of statements</h2>
+          <h2 className="font-serif text-2xl text-primary">From raw data to decisions</h2>
           <p>
-            Ethics starts with a clear distinction between two kinds of statements. A descriptive statement reports that something is the case; a normative statement expresses a value-judgment — that something is good or bad, right or wrong.
+            Data analytics is the practice of turning raw data into decisions. Instead of guessing, an analyst asks a clear question, gathers the relevant data, and lets the evidence guide the answer.
           </p>
           <p>
-            "Smith is over six feet tall" is descriptive. "It was evil of Hitler to commit genocide" is normative. Ethics is the study of these value-judgments — what makes them true, and what we owe one another.
+            Every project follows the same workflow: ask a question, collect the data, clean it, analyze it, and communicate what you found. Skipping a stage is where most bad conclusions come from.
           </p>
           
           <AnimatePresence>
@@ -90,10 +90,10 @@ export function Scene2({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
                 className="space-y-6"
               >
                 <p>
-                  Within value we distinguish further: things can be good in themselves (intrinsically) or good as a means to something else (instrumentally). Understanding how these fit together is crucial.
+                  The stages aren't strictly linear. Cleaning often reveals a new question, and a chart can expose a data-quality problem you missed. Good analysts loop back as they learn.
                 </p>
                 <p>
-                  For example, pleasure is often held to be intrinsically good, while money is only instrumentally good — valuable for what it can buy. Telling the two apart is the first real task of ethics.
+                  For example, a churn question might start in a spreadsheet, move to SQL once the data grows, and end in a dashboard the whole team can read. The workflow stays the same even as the tools change.
                 </p>
               </motion.div>
             )}
@@ -120,9 +120,9 @@ export function Scene2({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
               >
                 <div className="mb-4 text-xs font-semibold text-muted-foreground uppercase tracking-widest">Starter questions for this section</div>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  <div className="px-3 py-1.5 rounded-full border border-border text-sm text-primary bg-muted/30">Why isn't a normative claim just an opinion?</div>
-                  <div className="px-3 py-1.5 rounded-full border border-border text-sm text-primary bg-muted/30">What's the difference between intrinsic and instrumental good?</div>
-                  <div className="px-3 py-1.5 rounded-full border border-border text-sm text-primary bg-muted/30">Can a descriptive fact ever settle a value-judgment?</div>
+                  <div className="px-3 py-1.5 rounded-full border border-border text-sm text-primary bg-muted/30">You're asked why users are churning — what's the first step?</div>
+                  <div className="px-3 py-1.5 rounded-full border border-border text-sm text-primary bg-muted/30">A sales table has dates stored as text — which stage fixes that?</div>
+                  <div className="px-3 py-1.5 rounded-full border border-border text-sm text-primary bg-muted/30">When would you move from a spreadsheet to SQL?</div>
                 </div>
                 <div className="w-full h-24 border border-border rounded-lg bg-muted/20 p-3 text-muted-foreground text-sm flex items-end shadow-inner">
                   <div className="w-full flex justify-between">
@@ -157,7 +157,7 @@ export function Scene2({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
                     className="p-6 border border-border rounded-xl shadow-sm bg-white"
                   >
                     <p className="text-foreground font-medium mb-6">
-                      "It was evil of Hitler to commit genocide." Is this statement descriptive or normative, and what makes it so?
+                      A report says "sales are down" but never defines the time range. Which workflow stage was skipped, and why does it matter?
                     </p>
                     <div className="w-full h-12 border border-border rounded-md bg-muted/10 mb-4 px-3 flex items-center text-muted-foreground">Type your answer...</div>
                     <div className="px-4 py-2 bg-primary text-white rounded-md text-sm font-medium w-fit ml-auto">Submit</div>

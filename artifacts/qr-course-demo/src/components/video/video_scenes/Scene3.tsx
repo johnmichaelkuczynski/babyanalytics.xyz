@@ -58,10 +58,10 @@ export function Scene3({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
       {/* Left Pane (Static from previous) */}
       <div className="w-1/2 h-full border-r border-border p-12 overflow-hidden flex flex-col relative opacity-50">
         <div className="text-xs font-bold tracking-widest text-muted-foreground mb-4">UNIT 1</div>
-        <h1 className="text-3xl font-serif text-primary mb-8">1.1 What is ethics? Normative vs. descriptive</h1>
+        <h1 className="text-3xl font-serif text-primary mb-8">1.1 What data analytics is and the workflow</h1>
         <div className="prose prose-sm max-w-none text-foreground/80 space-y-6">
-          <h2 className="font-serif text-2xl text-primary">Two kinds of statements</h2>
-          <p>Ethics starts with a clear distinction between two kinds of statements. A descriptive statement reports that something is the case; a normative statement expresses a value-judgment — that something is good or bad, right or wrong.</p>
+          <h2 className="font-serif text-2xl text-primary">From raw data to decisions</h2>
+          <p>Data analytics is the practice of turning raw data into decisions. Instead of guessing, an analyst asks a clear question, gathers the relevant data, and lets the evidence guide the answer.</p>
         </div>
       </div>
 
@@ -79,7 +79,7 @@ export function Scene3({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
               <motion.div exit={{ opacity: 0, y: -20 }} className="mt-auto">
                 <div className="mb-4 text-xs font-semibold text-muted-foreground uppercase tracking-widest">Starter questions for this section</div>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  <div className="px-3 py-1.5 rounded-full border border-border text-sm text-primary bg-muted/30">Why isn't a normative claim just an opinion?</div>
+                  <div className="px-3 py-1.5 rounded-full border border-border text-sm text-primary bg-muted/30">You're asked why users are churning — what's the first step?</div>
                 </div>
               </motion.div>
             )}
@@ -90,7 +90,7 @@ export function Scene3({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
                 animate={{ opacity: 1, y: 0, scale: 1 }} 
                 className="self-end max-w-[85%] bg-primary text-white p-4 rounded-2xl rounded-tr-sm shadow-sm mt-auto"
               >
-                Why isn't a normative claim just an opinion?
+                You're asked why users are churning — what's the first step?
               </motion.div>
             )}
 
@@ -110,7 +110,7 @@ export function Scene3({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
                 animate={{ opacity: 1, y: 0 }} 
                 className="self-start w-[85%] bg-muted/30 border border-border p-5 rounded-2xl rounded-tl-sm text-[15px] leading-relaxed shadow-sm"
               >
-                <StreamingText text="Great question. A normative claim makes a value-judgment that something is good, bad, right, or wrong. Unlike a bare opinion, it can be supported with reasons and tested against principles — that's exactly what ethics studies: which value-judgments are justified, and why." delay={0} />
+                <StreamingText text="Great question. Before touching any data, define the question precisely: which users, what counts as churn, and over what window. A sharp question decides what data you collect and how you'll measure the answer — that's the first stage of the workflow." delay={0} />
               </motion.div>
             )}
           </div>
@@ -118,9 +118,9 @@ export function Scene3({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
           <div className="mt-6 w-full min-h-24 border border-border rounded-xl bg-background p-3 flex items-end shadow-inner relative z-10">
             <div className="w-full flex justify-between items-center pr-2">
               <div className="text-foreground text-[15px] font-medium pl-2 relative w-full h-full flex items-center">
-                {phase === 1 && <TypewriterText text="Why isn't a normative claim just an opinion?" speed={25} />}
+                {phase === 1 && <TypewriterText text="You're asked why users are churning — what's the first step?" speed={25} />}
                 {phase >= 2 && phase < 4 && <span className="text-muted-foreground font-normal">Ask a question about this section...</span>}
-                {phase >= 4 && <TypewriterText text="What about intrinsic value?" speed={20} />}
+                {phase >= 4 && <TypewriterText text="What about cleaning the data?" speed={20} />}
                 {((phase >= 1 && phase < 2) || phase >= 4) && (
                   <motion.div className="w-0.5 h-5 bg-primary ml-1" animate={{ opacity: [1, 0] }} transition={{ repeat: Infinity, duration: 0.8 }} />
                 )}

@@ -155,9 +155,9 @@ router.post("/practice/sessions/:sessionId/next", async (req, res): Promise<void
       correctAnswer: string;
       explanation: string;
     }>(
-      `You generate a single college ethics practice problem for a college freshman. The problem MUST be on the topic "${topic.title}" and at difficulty "${difficultyLabel}" (${difficulty.toFixed(
+      `You generate a single college data analytics practice problem for a college freshman. The problem MUST be on the topic "${topic.title}" and at difficulty "${difficultyLabel}" (${difficulty.toFixed(
         1,
-      )}/5). Test general knowledge of the SUBJECT of ethics, not recall of any particular book, lecture, or course. The question MUST be fully self-contained and answerable by anyone who knows the discipline: do NOT reference "the lecture", "the text", "the course", "the example", "the case", or any named character or example a student would only recognize from a specific reading. If you use a scenario, state it in full inside the question itself. Favor concept-identification, short self-contained scenario, and true/false-with-reason questions. The answer must be a short string (a single word, a term, "yes"/"no", or one short phrase) — never multi-paragraph. Respond as strict JSON: {"prompt": string, "correctAnswer": string, "explanation": string}. Avoid these recent prompts: ${JSON.stringify(
+      )}/5). Test general knowledge of the SUBJECT of data analytics, not recall of any particular book, lecture, or course. The question MUST be fully self-contained and answerable by anyone who knows the discipline: do NOT reference "the lecture", "the text", "the course", "the example", "the case", or any named character or example a student would only recognize from a specific reading. If you use a scenario, state it in full inside the question itself. Favor concept-identification, short self-contained scenario, and true/false-with-reason questions. The answer must be a short string (a single word, a term, "yes"/"no", or one short phrase) — never multi-paragraph. Respond as strict JSON: {"prompt": string, "correctAnswer": string, "explanation": string}. Avoid these recent prompts: ${JSON.stringify(
         lastProblems.map((p) => p.prompt),
       )}.`,
       userRequest || `Generate a new ${difficultyLabel} problem on ${topic.title}.`,
@@ -255,7 +255,7 @@ router.post("/practice/sessions/:sessionId/grade", async (req, res): Promise<voi
     try {
       tutorTip = (
         await chatJson<{ tip: string }>(
-          "You are a kind, concise ethics tutor. Given a problem, the correct answer, and the student's wrong attempt, give ONE focused next-step tip (2 sentences max). Respond as strict JSON: {\"tip\": string}.",
+          "You are a kind, concise data analytics tutor. Given a problem, the correct answer, and the student's wrong attempt, give ONE focused next-step tip (2 sentences max). Respond as strict JSON: {\"tip\": string}.",
           JSON.stringify({
             prompt: problem.prompt,
             correctAnswer: problem.correctAnswer,

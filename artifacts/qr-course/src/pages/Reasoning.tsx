@@ -9,14 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Scale, Brain } from "lucide-react";
 
 const PHASE_LABELS: Record<string, string> = {
-  baseline: "Baseline — before Unit 1",
-  unit1: "After Unit 1: Foundations of Value",
-  unit2: "After Unit 2: Obligation, Right, and Wrong",
-  unit3: "After Unit 3: Acts, Agents, and Judgment",
-  unit4: "After Unit 4: Metaethics and Moral Truth",
+  baseline: "Baseline — before the course",
+  unit1: "After Unit 1: Foundations of Data Analytics",
 };
 
-const PHASE_ORDER = ["baseline", "unit1", "unit2", "unit3", "unit4"];
+const PHASE_ORDER = ["baseline", "unit1"];
 
 function statusBadge(status: string) {
   const cls =
@@ -84,7 +81,7 @@ export default function Reasoning() {
           </h1>
           <p className="text-muted-foreground">
             Two short instruments — Ethical Reasoning and Critical Reasoning — taken
-            once at the start and again after each unit. Submitting an assessment
+            once at the start and again after the unit. Submitting an assessment
             earns a pass; together they count for 20% of your course grade.
           </p>
         </div>

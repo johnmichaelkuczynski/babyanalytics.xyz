@@ -13,7 +13,7 @@ export function Scene4({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
     // 0-1.5s: Cursor to sidebar "Analytics", clicks. Crossfade.
     // 1.5-4.0s: KPI tiles count up.
     // 4.0-6.0s: Topic Mastery rows stagger in.
-    // 6.0-8.5s: Cursor to "Commendableness and moral worth", click.
+    // 6.0-8.5s: Cursor to "Querying data with SQL", click.
     // 8.5-10s: Crossfade begins.
 
     setCursorPos({ x: '65vw', y: '90vh' }); // Start where Scene 3 left off
@@ -71,11 +71,11 @@ export function Scene4({ setCursorPos, setIsClicking }: { setCursorPos: (pos: {x
   }, [setCursorPos, setIsClicking]);
 
   const rows = [
-    { topic: 'What is ethics?', week: 'Unit 1', att: 0, acc: 0, stat: 'UNTESTED', statColor: 'text-muted-foreground bg-muted' },
-    { topic: 'Intrinsic vs. instrumental goodness', week: 'Unit 1', att: 1, acc: 1, stat: 'STRONG', statColor: 'text-emerald-700 bg-emerald-50' },
-    { topic: 'Commendableness and moral worth', week: 'Unit 1', att: 1, acc: 1, stat: 'STRONG', statColor: 'text-emerald-700 bg-emerald-50' },
-    { topic: 'Non-privative attributes of value', week: 'Unit 1', att: 0, acc: 0, stat: 'UNTESTED', statColor: 'text-muted-foreground bg-muted' },
-    { topic: 'Value and the limits of definition', week: 'Unit 1', att: 0, acc: 0, stat: 'UNTESTED', statColor: 'text-muted-foreground bg-muted' },
+    { topic: 'What data analytics is and the workflow', week: 'Unit 1', att: 0, acc: 0, stat: 'UNTESTED', statColor: 'text-muted-foreground bg-muted' },
+    { topic: 'Data types, structure, and spreadsheets', week: 'Unit 1', att: 1, acc: 1, stat: 'STRONG', statColor: 'text-emerald-700 bg-emerald-50' },
+    { topic: 'Querying data with SQL', week: 'Unit 1', att: 1, acc: 1, stat: 'STRONG', statColor: 'text-emerald-700 bg-emerald-50' },
+    { topic: 'Cleaning and transforming data', week: 'Unit 1', att: 0, acc: 0, stat: 'UNTESTED', statColor: 'text-muted-foreground bg-muted' },
+    { topic: 'Analysis with Python (pandas)', week: 'Unit 1', att: 0, acc: 0, stat: 'UNTESTED', statColor: 'text-muted-foreground bg-muted' },
   ];
 
   return (

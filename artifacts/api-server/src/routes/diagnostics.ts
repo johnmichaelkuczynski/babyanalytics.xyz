@@ -64,7 +64,7 @@ router.get("/diagnostics/system", async (_req, res) => {
       const l = await db.select().from(lecturesTable);
       const a = await db.select().from(assignmentsTable);
       const p = await db.select().from(problemsTable);
-      if (t.length < 27) throw new Error(`only ${t.length} topics`);
+      if (t.length < 6) throw new Error(`only ${t.length} topics`);
       if (l.length < 1) throw new Error("no lectures");
       if (a.length < 1) throw new Error("no assignments");
       if (p.length < 1) throw new Error("no problems");
@@ -331,7 +331,7 @@ router.post("/diagnostics/synthetic-run", async (_req, res) => {
           correctAnswer: string;
           explanation: string;
         }>(
-          `You generate a single college ethics practice problem on "${topic.title}" at easy difficulty, with a short answer (a word, term, "yes"/"no", or short phrase). Respond as strict JSON: {"prompt": string, "correctAnswer": string, "explanation": string}.`,
+          `You generate a single college data analytics practice problem on "${topic.title}" at easy difficulty, with a short answer (a word, term, "yes"/"no", or short phrase). Respond as strict JSON: {"prompt": string, "correctAnswer": string, "explanation": string}.`,
           `New problem on ${topic.title}.`,
         );
         const [stored] = await db
@@ -508,16 +508,16 @@ router.post("/diagnostics/quality-control", async (_req, res) => {
         }"`,
         async () => {
           // The course is grounded in a specific source text, whose framework and
-          // terminology can differ from mainstream philosophy. Both phases are
+          // terminology can differ from mainstream treatments. Both phases are
           // grounded in THIS lecture so the check judges keys against what the
-          // course actually teaches — not generic textbook ethics.
+          // course actually teaches — not generic textbook data analytics.
           const lecture = p.lectureBody.slice(0, 3500);
 
           // Phase 1 — independently re-derive the answer from the prompt + the
           // course's own lecture, blind to the seeded key, so the verdict can't
           // just rubber-stamp the key.
           const derived = await chatText(
-            "You are a strong college ethics student answering a short-answer problem. " +
+            "You are a strong college data analytics student answering a short-answer problem. " +
               "Base your answer on the course lecture provided, using its framework and terminology rather than outside theories. " +
               "Answer the prompt directly and concisely (one or two sentences, or just the requested word). " +
               "Do not restate the prompt or add commentary.\n\n=== COURSE LECTURE ===\n" +
@@ -533,12 +533,12 @@ router.post("/diagnostics/quality-control", async (_req, res) => {
             confidence: number;
             rationale: string;
           }>(
-            "You are an academic quality-control reviewer for a college ethics course. " +
+            "You are an academic quality-control reviewer for a college data analytics course. " +
               "You are given the course lecture the problem is drawn from, a problem prompt, the SHORT answer key the course grades students against, and an independently derived answer produced without seeing the key. " +
-              "Judge the key ONLY against what THIS lecture teaches — its definitions, framework, and terminology — not against outside or mainstream philosophy that the lecture does not use. " +
+              "Judge the key ONLY against what THIS lecture teaches — its definitions, framework, and terminology — not against outside or mainstream treatments that the lecture does not use. " +
               "Answers are graded by semantic equivalence: a key is legitimate if it is a correct, on-topic answer that a fair grader would accept given the lecture — it does NOT have to be the only possible answer, the most general phrasing, exhaustive, or identical to the independent answer. " +
               "Use the independent answer only as a cross-check; the key and the independent answer can both be correct while differing in wording or emphasis. Watch for polarity on yes/no and negated prompts. " +
-              "Mark a key NOT legitimate ONLY when it is genuinely defective relative to the lecture: factually or philosophically wrong by the lecture's own account, off-topic, self-contradictory, or so ambiguous it could not be graded fairly. " +
+              "Mark a key NOT legitimate ONLY when it is genuinely defective relative to the lecture: factually wrong by the lecture's own account, off-topic, self-contradictory, or so ambiguous it could not be graded fairly. " +
               "Do not penalize a key merely for being brief, for being one of several acceptable answers, for omitting nuance the short format can't carry, or for using the lecture's terminology instead of mainstream terms. " +
               'Respond as strict JSON: {"legitimate": boolean, "confidence": number between 0 and 1, "rationale": string (1-2 sentences)}.',
             JSON.stringify({
@@ -639,7 +639,7 @@ router.post("/diagnostics/expand-lectures", async (req, res) => {
       : "Noticeably more explanation: clarify each definition, motivate each rule, and add a short 'why this works' note where useful.";
 
   const sys =
-    `You are a college ethics lecturer producing the ${level.toUpperCase()} version of a lecture. ` +
+    `You are a college data analytics lecturer producing the ${level.toUpperCase()} version of a lecture. ` +
     "You are given the SHORT version of the lecture. Rewrite it as a longer teaching version. RULES, no exceptions:\n" +
     "1. KEEP every heading and every concept from the SHORT version, in the same order, with the same names. You may add new sub-sections only when needed to introduce additional examples — but no new top-level topics.\n" +
     `2. ${moreExplanation}\n` +

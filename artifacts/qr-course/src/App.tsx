@@ -235,13 +235,13 @@ function ClerkProviderWithRoutes() {
         signIn: {
           start: {
             title: "Welcome back",
-            subtitle: "Sign in to continue your Ethics course",
+            subtitle: "Sign in to continue your Data Analytics course",
           },
         },
         signUp: {
           start: {
             title: "Create your account",
-            subtitle: "Start your Ethics course with Ethics 101",
+            subtitle: "Start your Data Analytics course with Data 101",
           },
         },
       }}

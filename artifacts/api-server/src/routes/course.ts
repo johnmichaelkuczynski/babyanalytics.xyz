@@ -20,24 +20,9 @@ const router: IRouter = Router();
 
 const WEEK_TITLES: Record<number, { title: string; summary: string }> = {
   1: {
-    title: "Foundations of Value",
+    title: "Foundations of Data Analytics",
     summary:
-      "Normative vs. descriptive, normative categories, instrumental and intrinsic goodness, commendableness, intrinsic badness, moral complexity, and non-privative attributes.",
-  },
-  2: {
-    title: "Obligation, Right, and Wrong",
-    summary:
-      "The weight of obligations, outweighing vs. canceling, 'right' as least bad, 'wrong' as least good, 'ought' implies 'can', and legality vs. morality.",
-  },
-  3: {
-    title: "Acts, Agents, and Judgment",
-    summary:
-      "Judging an act vs. its status, act vs. agent, intention and attempts, the Hitler problem, immorality toward oneself, and autonomy.",
-  },
-  4: {
-    title: "Metaethics and Moral Truth",
-    summary:
-      "Deriving 'ought' from 'is', Moore's open question, ampliative entailment, genetic vs. normative questions, moral truth vs. its uses, ethical realism, disagreement, and a capstone synthesis.",
+      "What analytics is and the workflow, data types and spreadsheets, querying with SQL, cleaning and transforming data, analysis with Python (pandas), and data visualization and dashboards.",
   },
 };
 
@@ -112,7 +97,7 @@ async function buildWeek(weekNumber: number) {
 }
 
 router.get("/course/overview", async (_req, res) => {
-  const weeks = await Promise.all([1, 2, 3, 4].map(buildWeek));
+  const weeks = await Promise.all([1].map(buildWeek));
   const assignmentsTotal = weeks.reduce((s, w) => s + w.assignments.length, 0);
   const assignmentsCompleted = weeks.reduce(
     (s, w) => s + w.assignments.filter((a) => a.status === "submitted").length,
@@ -126,7 +111,7 @@ router.get("/course/overview", async (_req, res) => {
 
   res.json(
     GetCourseOverviewResponse.parse({
-      title: "Ethics",
+      title: "Data 101",
       weeks,
       totals: { assignmentsCompleted, assignmentsTotal, practiceCount },
     }),
@@ -138,7 +123,7 @@ router.get("/course/weeks/:weekNumber", async (req, res): Promise<void> => {
     ? req.params.weekNumber[0]
     : req.params.weekNumber;
   const weekNumber = parseInt(raw ?? "", 10);
-  if (!Number.isFinite(weekNumber) || weekNumber < 1 || weekNumber > 4) {
+  if (!Number.isFinite(weekNumber) || weekNumber < 1 || weekNumber > 1) {
     res.status(400).json({ error: "invalid weekNumber" });
     return;
   }
@@ -217,13 +202,13 @@ router.post(
     const sourceBody = (base && base.trim().length > 0 ? base : lecture.body).trim();
 
     const sys =
-      "You are a college ethics lecturer revising your own lecture at a student's request. " +
+      "You are a college data analytics lecturer revising your own lecture at a student's request. " +
       "You are given the CURRENT lecture and ONE instruction from the student about how to revise it. " +
       "Apply the instruction faithfully. ABSOLUTE RULES, no exceptions:\n" +
       "1. KEEP every concept, claim, and learning objective from the current lecture. Never drop material or change what the lecture teaches — only adjust how it is presented per the instruction.\n" +
       "2. Preserve the existing examples; you may add to or clarify them, but do not silently replace them with different ones unless the instruction explicitly asks you to.\n" +
       "3. Keep headings and section order intact. You may add sub-sections (e.g. extra examples) when the instruction calls for it.\n" +
-      "4. Stay accurate to the source material and to ethics as a discipline. Do not invent fake facts, citations, or quotations.\n" +
+      "4. Stay accurate to the source material and to data analytics as a discipline. Do not invent fake facts, citations, or quotations.\n" +
       "5. Use clear Markdown. Use $...$ for any inline math.\n" +
       "6. Return ONLY the rewritten Markdown lecture body — no preface, no commentary, no surrounding code fences.";
     const user =

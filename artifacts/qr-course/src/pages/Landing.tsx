@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import {
-  Scale,
+  BarChart3,
   BookOpen,
   MessagesSquare,
   Target,
@@ -27,7 +27,7 @@ const features = [
   {
     icon: ClipboardCheck,
     title: "AI-Graded Work",
-    body: "Homework, tests, a midterm, and a final — each with written feedback.",
+    body: "Homework, a unit test, and a final — each with written feedback.",
   },
   {
     icon: ShieldCheck,
@@ -35,17 +35,19 @@ const features = [
     body: "Every submission is screened for AI authorship, with a clear verdict.",
   },
   {
-    icon: Scale,
-    title: "Four Units, 27 Topics",
-    body: "From the nature of goodness to whether moral truth exists.",
+    icon: BarChart3,
+    title: "One Unit, 6 Topics",
+    body: "From the analytics workflow to SQL, pandas, and data visualization.",
   },
 ];
 
-const units = [
-  { n: 1, title: "Foundations of Value" },
-  { n: 2, title: "Obligation, Right, and Wrong" },
-  { n: 3, title: "Acts, Agents, and Judgment" },
-  { n: 4, title: "Metaethics and Moral Truth" },
+const topics = [
+  { n: "1.1", title: "What data analytics is and the workflow" },
+  { n: "1.2", title: "Data types, structure, and spreadsheets" },
+  { n: "1.3", title: "Querying data with SQL" },
+  { n: "1.4", title: "Cleaning and transforming data" },
+  { n: "1.5", title: "Analysis with Python (pandas)" },
+  { n: "1.6", title: "Data visualization and dashboards" },
 ];
 
 export default function Landing() {
@@ -57,7 +59,7 @@ export default function Landing() {
             101
           </div>
           <span className="font-serif font-semibold text-lg tracking-tight">
-            Ethics 101
+            Data 101
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -83,16 +85,16 @@ export default function Landing() {
       <main className="flex-1">
         <section className="max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary text-secondary-foreground text-xs font-medium mb-6">
-            <Scale className="w-3.5 h-3.5" />
-            A four-unit college Ethics course
+            <BarChart3 className="w-3.5 h-3.5" />
+            A one-unit foundations of data analytics course
           </div>
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-primary leading-tight mb-5">
-            Read the idea. Ground the idea. Write the idea.
+            Ask the question. Work the data. Tell the story.
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-            A self-paced Ethics course that teaches, tutors, drills, and grades
-            you — from the nature of goodness all the way to whether moral truth
-            exists.
+            A self-paced data analytics course that teaches, tutors, drills, and
+            grades you — from the analytics workflow all the way to SQL, pandas,
+            and data visualization.
           </p>
           <div className="flex items-center justify-center gap-3">
             <Link href="/sign-up">
@@ -136,19 +138,19 @@ export default function Landing() {
             The Curriculum
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {units.map((u) => (
+            {topics.map((t) => (
               <div
-                key={u.n}
+                key={t.n}
                 className="flex items-center gap-4 rounded-lg border border-border bg-card p-5"
               >
-                <div className="w-10 h-10 shrink-0 rounded-md bg-primary text-primary-foreground flex items-center justify-center font-serif font-bold">
-                  {u.n}
+                <div className="w-10 h-10 shrink-0 rounded-md bg-primary text-primary-foreground flex items-center justify-center font-serif font-bold text-sm">
+                  {t.n}
                 </div>
                 <div>
                   <div className="text-xs uppercase tracking-wider text-muted-foreground">
-                    Unit {u.n}
+                    Topic {t.n}
                   </div>
-                  <div className="font-medium">{u.title}</div>
+                  <div className="font-medium">{t.title}</div>
                 </div>
               </div>
             ))}
@@ -157,7 +159,7 @@ export default function Landing() {
       </main>
 
       <footer className="border-t border-border px-6 py-6 text-center text-sm text-muted-foreground">
-        Ethics 101 — where the curriculum, the tutor, the grader, and the
+        Data 101 — where the curriculum, the tutor, the grader, and the
         integrity check all live in one room.
       </footer>
     </div>

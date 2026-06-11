@@ -8,9 +8,6 @@ import { Link } from "wouter";
 const PHASE_SHORT: Record<string, string> = {
   baseline: "Baseline",
   unit1: "Unit 1",
-  unit2: "Unit 2",
-  unit3: "Unit 3",
-  unit4: "Unit 4",
 };
 
 function statusPill(status: string) {

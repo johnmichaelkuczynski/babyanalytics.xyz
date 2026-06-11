@@ -6,23 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { Scale, Brain, CheckCircle2 } from "lucide-react";
 
-type Phase = "baseline" | "unit1" | "unit2" | "unit3" | "unit4";
+type Phase = "baseline" | "unit1";
 
 const HEADINGS: Record<Phase, string> = {
   baseline: "Start here: Baseline reasoning assessments",
   unit1: "End of Unit 1: Reasoning checkpoint",
-  unit2: "End of Unit 2: Reasoning checkpoint",
-  unit3: "End of Unit 3: Reasoning checkpoint",
-  unit4: "End of Unit 4: Reasoning checkpoint",
 };
 
 const BLURBS: Record<Phase, string> = {
   baseline:
     "Take both short diagnostics before you begin so your progress can be measured against where you started.",
-  unit1: "Take both diagnostics again to measure your growth since the baseline.",
-  unit2: "Take both diagnostics again to measure your growth since the baseline.",
-  unit3: "Take both diagnostics again to measure your growth since the baseline.",
-  unit4: "Take both diagnostics one last time to capture your end-of-course growth.",
+  unit1: "Take both diagnostics one last time to capture your end-of-course growth.",
 };
 
 function Row({ a }: { a: ReasoningAssessmentSummary }) {
