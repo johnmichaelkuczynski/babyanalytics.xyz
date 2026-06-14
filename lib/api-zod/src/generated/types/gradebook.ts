@@ -6,7 +6,6 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { GradebookCourseworkItem } from './gradebookCourseworkItem';
-import type { GradebookReasoningItem } from './gradebookReasoningItem';
 import type { GradeComponent } from './gradeComponent';
 
 export interface Gradebook {
@@ -14,5 +13,4 @@ export interface Gradebook {
   letterGrade: string;
   components: GradeComponent[];
   coursework: GradebookCourseworkItem[];
-  reasoning: GradebookReasoningItem[];
 }

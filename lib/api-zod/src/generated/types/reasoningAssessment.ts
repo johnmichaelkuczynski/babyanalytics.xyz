@@ -5,17 +5,22 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-import type { ReasoningAssessmentInstrument } from './reasoningAssessmentInstrument';
+import type { ReasoningAssessmentFormat } from './reasoningAssessmentFormat';
+import type { ReasoningAssessmentKind } from './reasoningAssessmentKind';
+import type { ReasoningAssessmentLength } from './reasoningAssessmentLength';
 import type { ReasoningAssessmentPhase } from './reasoningAssessmentPhase';
 import type { ReasoningItem } from './reasoningItem';
 
 export interface ReasoningAssessment {
   id: number;
-  instrument: ReasoningAssessmentInstrument;
+  kind: ReasoningAssessmentKind;
+  format: ReasoningAssessmentFormat;
+  length: ReasoningAssessmentLength;
   phase: ReasoningAssessmentPhase;
   title: string;
   /** @nullable */
   subtitle?: string | null;
   instructions: string;
+  /** Always empty for an assessment — items are generated fresh per attempt and returned by the start endpoint, never repeated. */
   items: ReasoningItem[];
 }

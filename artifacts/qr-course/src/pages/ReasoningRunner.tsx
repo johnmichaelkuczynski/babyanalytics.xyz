@@ -14,16 +14,9 @@ import type {
   ReasoningMetric,
 } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CheckCircle2, AlertCircle, XCircle } from "lucide-react";
-
-const RATING_LABELS = ["No importance", "Little", "Some", "Much", "Great"];
-
-type DilemmaState = {
-  decisionIndex: number | null;
-  ratings: Record<number, number>; // considerationIndex -> 0..4
-  ranks: Record<number, number>; // considerationIndex -> 1..rankCount
-};
+import { CheckCircle2, AlertCircle, XCircle, MinusCircle } from "lucide-react";
 
 export default function ReasoningRunner() {
   const params = useParams();
@@ -41,14 +34,14 @@ export default function ReasoningRunner() {
     review: ReasoningReviewItem[] | null;
   } | null>(null);
 
-  // The items to present for THIS attempt. The first take uses the seeded
-  // template; each retake returns freshly generated questions of the same kind.
+  // The items to present for THIS attempt. Each attempt (first take or retake)
+  // returns freshly generated questions of the chosen kind, format, and length.
   const [items, setItems] = useState<ReasoningItem[] | null>(null);
 
-  // MCQ selections: itemId -> optionIndex
+  // mcq selections: itemId -> optionIndex
   const [mcqAnswers, setMcqAnswers] = useState<Record<number, number>>({});
-  // Dilemma state: itemId -> state
-  const [dilemma, setDilemma] = useState<Record<number, DilemmaState>>({});
+  // written answers: itemId -> text
+  const [writtenAnswers, setWrittenAnswers] = useState<Record<number, string>>({});
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -72,57 +65,14 @@ export default function ReasoningRunner() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assessmentId]);
 
-  function setDecision(itemId: number, idx: number) {
-    setDilemma((prev) => ({
-      ...prev,
-      [itemId]: {
-        decisionIndex: idx,
-        ratings: prev[itemId]?.ratings ?? {},
-        ranks: prev[itemId]?.ranks ?? {},
-      },
-    }));
-  }
-
-  function setRating(itemId: number, consIdx: number, rating: number) {
-    setDilemma((prev) => {
-      const cur = prev[itemId] ?? { decisionIndex: null, ratings: {}, ranks: {} };
-      return { ...prev, [itemId]: { ...cur, ratings: { ...cur.ratings, [consIdx]: rating } } };
-    });
-  }
-
-  function setRank(itemId: number, consIdx: number, rank: number) {
-    setDilemma((prev) => {
-      const cur = prev[itemId] ?? { decisionIndex: null, ratings: {}, ranks: {} };
-      const ranks = { ...cur.ranks };
-      // Ensure each rank is used once: clear any other consideration holding it.
-      for (const k of Object.keys(ranks)) {
-        if (ranks[Number(k)] === rank) delete ranks[Number(k)];
-      }
-      if (rank === 0) delete ranks[consIdx];
-      else ranks[consIdx] = rank;
-      return { ...prev, [itemId]: { ...cur, ranks } };
-    });
-  }
-
   function buildResponses(items: ReasoningItem[]): ReasoningResponseInput[] {
     return items.map((item) => {
       if (item.type === "mcq") {
         return { itemId: item.id, selectedIndex: mcqAnswers[item.id] ?? null };
       }
-      const st = dilemma[item.id];
-      const consCount = item.considerations?.length ?? 0;
-      const ratings = Array.from({ length: consCount }, (_, i) => st?.ratings[i] ?? 0);
-      const rankCount = item.rankCount ?? 4;
-      const ranking: number[] = [];
-      for (let r = 1; r <= rankCount; r++) {
-        const found = st ? Object.keys(st.ranks).find((k) => st.ranks[Number(k)] === r) : undefined;
-        if (found !== undefined) ranking.push(Number(found));
-      }
       return {
         itemId: item.id,
-        decisionIndex: st?.decisionIndex ?? null,
-        ratings,
-        ranking,
+        writtenAnswer: writtenAnswers[item.id]?.trim() || null,
       };
     });
   }
@@ -130,13 +80,11 @@ export default function ReasoningRunner() {
   function validate(items: ReasoningItem[]): string | null {
     for (const item of items) {
       if (item.type === "mcq") {
-        if (mcqAnswers[item.id] === undefined) return "Please answer every question before submitting.";
+        if (mcqAnswers[item.id] === undefined)
+          return "Please answer every multiple-choice question before submitting.";
       } else {
-        const st = dilemma[item.id];
-        if (!st || st.decisionIndex === null) return "Please choose a decision for the scenario.";
-        const rankCount = item.rankCount ?? 4;
-        const ranked = st ? Object.values(st.ranks).filter((v) => v >= 1 && v <= rankCount).length : 0;
-        if (ranked < rankCount) return `Please rank your top ${rankCount} considerations.`;
+        if (!writtenAnswers[item.id]?.trim())
+          return "Please write a short answer for every written question.";
       }
     }
     return null;
@@ -152,7 +100,8 @@ export default function ReasoningRunner() {
           setResult(null);
           setAlreadyPassed(null);
           setMcqAnswers({});
-          setDilemma({});
+          setWrittenAnswers({});
+          window.scrollTo({ top: 0 });
         },
       },
     );
@@ -183,7 +132,7 @@ export default function ReasoningRunner() {
     );
   }
 
-  // Result / already-passed screen
+  // Result / already-completed screen
   if (result || alreadyPassed) {
     const feedback = result?.feedback ?? alreadyPassed?.feedback ?? "";
     const headline = result?.headline ?? alreadyPassed?.headline ?? null;
@@ -194,9 +143,11 @@ export default function ReasoningRunner() {
         <div className="p-8 max-w-3xl mx-auto w-full flex flex-col gap-8">
           <div className="flex justify-between items-start">
             <div>
-              <h1 className="text-3xl font-serif font-bold text-primary mb-1">{assessment.title}</h1>
+              <h1 className="text-3xl font-serif font-bold text-primary mb-1">
+                {assessment.title}
+              </h1>
               <span className="inline-flex items-center gap-1.5 text-chart-2 font-medium">
-                <CheckCircle2 className="w-5 h-5" /> Passed
+                <CheckCircle2 className="w-5 h-5" /> Completed
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -205,10 +156,12 @@ export default function ReasoningRunner() {
                 disabled={startAttempt.isPending}
                 data-testid="button-retake-reasoning"
               >
-                {startAttempt.isPending ? "Starting…" : "Retake assessment"}
+                {startAttempt.isPending ? "Starting…" : "Retake with fresh questions"}
               </Button>
               <Link href="/reasoning">
-                <Button variant="outline" data-testid="button-back-reasoning">Back to Assessments</Button>
+                <Button variant="outline" data-testid="button-back-reasoning">
+                  Back to Assessments
+                </Button>
               </Link>
             </div>
           </div>
@@ -223,9 +176,13 @@ export default function ReasoningRunner() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {metrics.map((m) => (
                 <div key={m.label} className="rounded-md border border-border p-4">
-                  <div className="text-xs uppercase tracking-wider text-muted-foreground">{m.label}</div>
+                  <div className="text-xs uppercase tracking-wider text-muted-foreground">
+                    {m.label}
+                  </div>
                   <div className="text-xl font-semibold">{m.value}</div>
-                  {m.detail && <div className="text-xs text-muted-foreground mt-1">{m.detail}</div>}
+                  {m.detail && (
+                    <div className="text-xs text-muted-foreground mt-1">{m.detail}</div>
+                  )}
                 </div>
               ))}
             </div>
@@ -254,7 +211,9 @@ export default function ReasoningRunner() {
       <div className="p-8 max-w-3xl mx-auto w-full flex flex-col gap-8 pb-28">
         <div className="border-b pb-4">
           <h1 className="text-2xl font-serif font-bold text-primary">{assessment.title}</h1>
-          {assessment.subtitle && <p className="text-sm text-muted-foreground mt-1">{assessment.subtitle}</p>}
+          {assessment.subtitle && (
+            <p className="text-sm text-muted-foreground mt-1">{assessment.subtitle}</p>
+          )}
           <p className="text-sm text-muted-foreground mt-3">{assessment.instructions}</p>
         </div>
 
@@ -269,13 +228,12 @@ export default function ReasoningRunner() {
                 onSelect={(opt) => setMcqAnswers((p) => ({ ...p, [item.id]: opt }))}
               />
             ) : (
-              <DilemmaQuestion
+              <WrittenQuestion
                 key={item.id}
+                index={idx}
                 item={item}
-                state={dilemma[item.id]}
-                onDecision={(i) => setDecision(item.id, i)}
-                onRating={(c, r) => setRating(item.id, c, r)}
-                onRank={(c, r) => setRank(item.id, c, r)}
+                value={writtenAnswers[item.id] ?? ""}
+                onChange={(v) => setWrittenAnswers((p) => ({ ...p, [item.id]: v }))}
               />
             ),
           )}
@@ -346,99 +304,51 @@ function McqQuestion({
   );
 }
 
-function DilemmaQuestion({
+function WrittenQuestion({
+  index,
   item,
-  state,
-  onDecision,
-  onRating,
-  onRank,
+  value,
+  onChange,
 }: {
+  index: number;
   item: ReasoningItem;
-  state: DilemmaState | undefined;
-  onDecision: (i: number) => void;
-  onRating: (consIdx: number, rating: number) => void;
-  onRank: (consIdx: number, rank: number) => void;
+  value: string;
+  onChange: (v: string) => void;
 }) {
-  const rankCount = item.rankCount ?? 4;
-  const considerations = item.considerations ?? [];
   return (
-    <div className="flex flex-col gap-6" data-testid={`dilemma-${item.id}`}>
-      <div className="prose prose-slate dark:prose-invert max-w-none">
-        <p className="whitespace-pre-line text-base leading-relaxed">{item.prompt}</p>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <h4 className="font-serif font-semibold">What should they do?</h4>
-        {(item.decisionOptions ?? []).map((opt, oi) => (
-          <button
-            key={oi}
-            type="button"
-            onClick={() => onDecision(oi)}
-            className={`text-left px-4 py-3 rounded-md border transition-colors ${
-              state?.decisionIndex === oi
-                ? "border-primary bg-primary/5 ring-1 ring-primary"
-                : "border-border hover:bg-secondary"
-            }`}
-            data-testid={`decision-${item.id}-${oi}`}
-          >
-            {opt}
-          </button>
-        ))}
-      </div>
-
-      <div className="flex flex-col gap-4">
-        <div>
-          <h4 className="font-serif font-semibold">Rate each consideration</h4>
-          <p className="text-sm text-muted-foreground">
-            How important was each one to your decision? Then rank your {rankCount} most
-            important using the selector on the right.
-          </p>
-        </div>
-        <div className="flex flex-col divide-y border rounded-md">
-          {considerations.map((c, ci) => (
-            <div key={ci} className="p-4 flex flex-col gap-3">
-              <p className="text-sm">{c}</p>
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex flex-wrap gap-1.5">
-                  {RATING_LABELS.map((label, r) => {
-                    const active = (state?.ratings[ci] ?? -1) === r;
-                    return (
-                      <button
-                        key={r}
-                        type="button"
-                        onClick={() => onRating(ci, r)}
-                        title={label}
-                        className={`px-2.5 py-1 rounded text-xs border transition-colors ${
-                          active
-                            ? "border-primary bg-primary text-primary-foreground"
-                            : "border-border hover:bg-secondary"
-                        }`}
-                        data-testid={`rating-${item.id}-${ci}-${r}`}
-                      >
-                        {label}
-                      </button>
-                    );
-                  })}
-                </div>
-                <select
-                  value={state?.ranks[ci] ?? 0}
-                  onChange={(e) => onRank(ci, Number(e.target.value))}
-                  className="text-sm border border-input rounded-md px-2 py-1 bg-background"
-                  data-testid={`rank-${item.id}-${ci}`}
-                >
-                  <option value={0}>Rank —</option>
-                  {Array.from({ length: rankCount }, (_, i) => i + 1).map((r) => (
-                    <option key={r} value={r}>
-                      Rank {r}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+    <div className="flex flex-col gap-3" data-testid={`question-${item.id}`}>
+      <h3 className="font-medium">
+        <span className="text-muted-foreground mr-2">{index + 1}.</span>
+        {item.prompt}
+      </h3>
+      <Textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="A sentence or two is plenty."
+        rows={3}
+        className="resize-y"
+        data-testid={`written-${item.id}`}
+      />
     </div>
+  );
+}
+
+function verdict(isCorrect: boolean | null | undefined) {
+  if (isCorrect === null || isCorrect === undefined) {
+    return (
+      <span className="inline-flex items-center gap-1 text-muted-foreground text-sm font-medium shrink-0">
+        <MinusCircle className="w-4 h-4" /> Not graded
+      </span>
+    );
+  }
+  return isCorrect ? (
+    <span className="inline-flex items-center gap-1 text-chart-2 text-sm font-medium shrink-0">
+      <CheckCircle2 className="w-4 h-4" /> Correct
+    </span>
+  ) : (
+    <span className="inline-flex items-center gap-1 text-destructive text-sm font-medium shrink-0">
+      <XCircle className="w-4 h-4" /> Needs work
+    </span>
   );
 }
 
@@ -446,25 +356,18 @@ function ReviewCard({ item, index }: { item: ReasoningReviewItem; index: number 
   if (item.type === "mcq") {
     const options = item.options ?? [];
     return (
-      <div className="rounded-lg border border-border bg-card p-5" data-testid={`review-item-${item.itemId}`}>
+      <div
+        className="rounded-lg border border-border bg-card p-5"
+        data-testid={`review-item-${item.itemId}`}
+      >
         <div className="flex items-start justify-between gap-3 mb-3">
           <p className="font-medium">
             <span className="text-muted-foreground mr-2">{index + 1}.</span>
             {item.prompt}
           </p>
-          {item.isCorrect === null ? (
-            <span className="inline-flex items-center gap-1 text-muted-foreground text-sm font-medium shrink-0">
-              <AlertCircle className="w-4 h-4" /> No answer
-            </span>
-          ) : item.isCorrect ? (
-            <span className="inline-flex items-center gap-1 text-chart-2 text-sm font-medium shrink-0">
-              <CheckCircle2 className="w-4 h-4" /> Correct
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1 text-destructive text-sm font-medium shrink-0">
-              <XCircle className="w-4 h-4" /> Incorrect
-            </span>
-          )}
+          {item.selectedIndex === null || item.selectedIndex === undefined
+            ? verdict(null)
+            : verdict(item.isCorrect)}
         </div>
         <div className="flex flex-col gap-2">
           {options.map((opt, oi) => {
@@ -497,33 +400,40 @@ function ReviewCard({ item, index }: { item: ReasoningReviewItem; index: number 
     );
   }
 
-  const decisionOptions = item.decisionOptions ?? [];
-  const considerations = item.considerations ?? [];
-  const ranking = item.ranking ?? [];
-  const chosen =
-    item.decisionIndex !== null && item.decisionIndex !== undefined
-      ? decisionOptions[item.decisionIndex]
-      : null;
   return (
-    <div className="rounded-lg border border-border bg-card p-5" data-testid={`review-item-${item.itemId}`}>
-      <p className="font-medium mb-3">
-        <span className="text-muted-foreground mr-2">{index + 1}.</span>
-        {item.prompt}
-      </p>
-      <div className="mb-3">
-        <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Your decision</div>
-        <p className="text-sm">{chosen ?? "No decision recorded"}</p>
+    <div
+      className="rounded-lg border border-border bg-card p-5"
+      data-testid={`review-item-${item.itemId}`}
+    >
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <p className="font-medium">
+          <span className="text-muted-foreground mr-2">{index + 1}.</span>
+          {item.prompt}
+        </p>
+        {verdict(item.isCorrect)}
       </div>
-      {ranking.length > 0 && (
-        <div>
+      <div className="mb-3">
+        <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
+          Your answer
+        </div>
+        <p className="text-sm whitespace-pre-line">
+          {item.writtenAnswer?.trim() || "No answer recorded"}
+        </p>
+      </div>
+      {item.modelAnswer && (
+        <div className="mb-3">
           <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
-            Your ranked considerations
+            A strong answer
           </div>
-          <ol className="list-decimal list-inside text-sm flex flex-col gap-1">
-            {ranking.map((ci, i) => (
-              <li key={i}>{considerations[ci] ?? `Consideration ${ci + 1}`}</li>
-            ))}
-          </ol>
+          <p className="text-sm whitespace-pre-line">{item.modelAnswer}</p>
+        </div>
+      )}
+      {item.rationale && (
+        <div className="rounded-md bg-secondary/50 px-3 py-2">
+          <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
+            Feedback
+          </div>
+          <p className="text-sm whitespace-pre-line">{item.rationale}</p>
         </div>
       )}
     </div>

@@ -6,22 +6,28 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { Compass, Brain, CheckCircle2 } from "lucide-react";
 
-type Phase = "baseline" | "unit1";
+type Phase = "before" | "during1" | "during2" | "after";
 
 const HEADINGS: Record<Phase, string> = {
-  baseline: "Start here: Baseline reasoning assessments",
-  unit1: "End of Unit 1: Reasoning checkpoint",
+  before: "Start here: take a baseline check",
+  during1: "Mid-course check-in",
+  during2: "Mid-course check-in",
+  after: "End of course: measure your growth",
 };
 
 const BLURBS: Record<Phase, string> = {
-  baseline:
-    "Take both short diagnostics before you begin so your progress can be measured against where you started.",
-  unit1: "Take both diagnostics one last time to capture your end-of-course growth.",
+  before:
+    "Optional, ungraded checks of your data-analytics ability and general reasoning. Take one now so you have a starting point to measure against later.",
+  during1:
+    "Optional, ungraded ability checks. Take one to see how you're tracking partway through the course.",
+  during2:
+    "Optional, ungraded ability checks. Take one to see how you're tracking partway through the course.",
+  after:
+    "Take an ungraded check one last time to see how far your data-analytics ability and reasoning have come.",
 };
 
 function Row({ a }: { a: ReasoningAssessmentSummary }) {
-  const isEthical = a.instrument === "ethical";
-  const Icon = isEthical ? Compass : Brain;
+  const Icon = a.kind === "subject" ? Compass : Brain;
   const passed = a.status === "passed";
   return (
     <Link href={`/reasoning/${a.id}`}>
@@ -31,13 +37,11 @@ function Row({ a }: { a: ReasoningAssessmentSummary }) {
       >
         <div className="flex items-center gap-3 min-w-0">
           <Icon className="w-4 h-4 text-primary shrink-0" />
-          <span className="text-sm font-medium truncate">
-            {isEthical ? "Professional Judgment" : "Critical Reasoning"}
-          </span>
+          <span className="text-sm font-medium truncate">{a.title}</span>
         </div>
         {passed ? (
           <span className="inline-flex items-center gap-1 text-xs text-chart-2 font-medium shrink-0">
-            <CheckCircle2 className="w-3.5 h-3.5" /> Passed
+            <CheckCircle2 className="w-3.5 h-3.5" /> Completed
           </span>
         ) : (
           <Button size="sm" variant="default" className="shrink-0">
@@ -51,11 +55,16 @@ function Row({ a }: { a: ReasoningAssessmentSummary }) {
 
 export function ReasoningCallout({ phase }: { phase: Phase }) {
   const { data } = useListReasoningAssessments();
-  const items = (data ?? []).filter((a) => a.phase === phase);
-  if (items.length === 0) return null;
+  // Show one representative check per kind for this phase: the shortest
+  // multiple-choice option, so the callout stays compact. The full catalog of
+  // formats and lengths lives on the Assessments page.
+  const forPhase = (data ?? []).filter(
+    (a) => a.phase === phase && a.format === "mcq" && a.length === "short",
+  );
+  if (forPhase.length === 0) return null;
 
-  const rank = (a: ReasoningAssessmentSummary) => (a.instrument === "ethical" ? 0 : 1);
-  const sorted = items.slice().sort((x, y) => rank(x) - rank(y));
+  const rank = (a: ReasoningAssessmentSummary) => (a.kind === "subject" ? 0 : 1);
+  const sorted = forPhase.slice().sort((x, y) => rank(x) - rank(y));
 
   return (
     <Card className="border-primary/30 bg-primary/5">
@@ -63,7 +72,7 @@ export function ReasoningCallout({ phase }: { phase: Phase }) {
         <div className="flex items-center justify-between gap-3">
           <h3 className="font-serif font-semibold">{HEADINGS[phase]}</h3>
           <span className="text-xs uppercase tracking-wider text-muted-foreground">
-            20% of grade
+            Ungraded
           </span>
         </div>
         <p className="text-sm text-muted-foreground">{BLURBS[phase]}</p>
@@ -72,6 +81,11 @@ export function ReasoningCallout({ phase }: { phase: Phase }) {
             <Row key={a.id} a={a} />
           ))}
         </div>
+        <Link href="/reasoning">
+          <span className="text-xs text-primary hover:underline cursor-pointer">
+            See all formats and lengths →
+          </span>
+        </Link>
       </CardContent>
     </Card>
   );

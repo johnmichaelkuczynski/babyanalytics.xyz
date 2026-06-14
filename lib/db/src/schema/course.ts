@@ -150,16 +150,23 @@ export const practiceAttemptsTable = pgTable("practice_attempts", {
 });
 
 // ---------------------------------------------------------------------------
-// Diagnostic reasoning assessments (embedded program-level instruments).
-// Two original instruments — Ethical Reasoning (DIT-style) and Critical
-// Reasoning (CCTST-style) — each administered 5 times (baseline + after each
-// of the 4 units) with mutually unique items. Pass/Fail: submitting = pass.
+// Diagnostic assessments (independent, ungraded ability checks).
+//
+// Two KINDS — Subject Mastery (data-analytics ability, verified
+// independently) and General Reasoning (genuine reasoning ability) — each
+// offered in 3 FORMATS (mcq | written | hybrid) × 3 LENGTHS
+// (short | medium | long) × 4 PHASES (before | during1 | during2 | after).
+// Diagnostics never affect the course grade. Every attempt generates fresh,
+// never-repeated questions; the catalog rows below are just the selectable
+// configurations. Pass/Fail: submitting completes the diagnostic.
 // ---------------------------------------------------------------------------
 
 export const diagnosticAssessmentsTable = pgTable("diagnostic_assessments", {
   id: serial("id").primaryKey(),
-  instrument: text("instrument").notNull(), // ethical | critical
-  phase: text("phase").notNull(), // baseline | unit1 | unit2 | unit3 | unit4
+  kind: text("kind").notNull(), // subject | reasoning
+  format: text("format").notNull(), // mcq | written | hybrid
+  length: text("length").notNull(), // short | medium | long
+  phase: text("phase").notNull(), // before | during1 | during2 | after
   title: text("title").notNull(),
   subtitle: text("subtitle"),
   instructions: text("instructions").notNull(),
@@ -171,23 +178,20 @@ export const diagnosticItemsTable = pgTable("diagnostic_items", {
   assessmentId: integer("assessment_id")
     .notNull()
     .references(() => diagnosticAssessmentsTable.id, { onDelete: "cascade" }),
-  // Null for the seeded "template" items (the canonical question bank used for
-  // the first take and as the generation template). For a retake, fresh items
-  // are generated per attempt and tagged with that attempt's id so every
-  // retake gets different questions of the same kind. These cascade-delete
-  // with their attempt.
+  // Items are always generated per attempt (never repeated across attempts),
+  // so this is set for every row and cascade-deletes with its attempt.
   attemptId: integer("attempt_id").references(
     () => diagnosticAttemptsTable.id,
     { onDelete: "cascade" },
   ),
   position: integer("position").notNull(),
-  type: text("type").notNull(), // dilemma | mcq
+  type: text("type").notNull(), // mcq | written
   prompt: text("prompt").notNull(),
   // Public payload sent to the client: for mcq -> { options: string[] };
-  // for dilemma -> { decisionOptions: string[], considerations: string[] }.
+  // for written -> {} (only the prompt is shown).
   payload: jsonb("payload").notNull(),
-  // Hidden scoring key, never sent to the client: for mcq ->
-  // { correctIndex, skillArea }; for dilemma -> { stages: string[], rankCount }.
+  // Hidden scoring key, never sent to the client: for mcq -> { correctIndex };
+  // for written -> { modelAnswer, gradingNote }.
   scoring: jsonb("scoring").notNull(),
 });
 
@@ -218,8 +222,6 @@ export const diagnosticResponsesTable = pgTable("diagnostic_responses", {
     .notNull()
     .references(() => diagnosticItemsTable.id, { onDelete: "cascade" }),
   selectedIndex: integer("selected_index"), // mcq — chosen option index
-  decisionIndex: integer("decision_index"), // dilemma — chosen decision index
-  ratings: jsonb("ratings"), // dilemma — importance rating per consideration
-  ranking: jsonb("ranking"), // dilemma — consideration indices, most-important first
-  isCorrect: boolean("is_correct"), // mcq only — null for dilemma items
+  writtenAnswer: text("written_answer"), // written — the student's short answer
+  isCorrect: boolean("is_correct"), // mcq + written — graded correctness
 });

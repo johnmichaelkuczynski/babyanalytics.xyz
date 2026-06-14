@@ -5,13 +5,17 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-import type { ReasoningAssessmentSummaryInstrument } from './reasoningAssessmentSummaryInstrument';
+import type { ReasoningAssessmentSummaryFormat } from './reasoningAssessmentSummaryFormat';
+import type { ReasoningAssessmentSummaryKind } from './reasoningAssessmentSummaryKind';
+import type { ReasoningAssessmentSummaryLength } from './reasoningAssessmentSummaryLength';
 import type { ReasoningAssessmentSummaryPhase } from './reasoningAssessmentSummaryPhase';
 import type { ReasoningAssessmentSummaryStatus } from './reasoningAssessmentSummaryStatus';
 
 export interface ReasoningAssessmentSummary {
   id: number;
-  instrument: ReasoningAssessmentSummaryInstrument;
+  kind: ReasoningAssessmentSummaryKind;
+  format: ReasoningAssessmentSummaryFormat;
+  length: ReasoningAssessmentSummaryLength;
   phase: ReasoningAssessmentSummaryPhase;
   title: string;
   /** @nullable */

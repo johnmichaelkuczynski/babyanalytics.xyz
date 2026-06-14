@@ -14,18 +14,8 @@ export interface ReasoningResponseInput {
      */
   selectedIndex?: number | null;
   /**
-     * dilemma — chosen decision index.
+     * written — the student's short answer text.
      * @nullable
      */
-  decisionIndex?: number | null;
-  /**
-     * dilemma — importance rating (0-4) per consideration, by index.
-     * @nullable
-     */
-  ratings?: number[] | null;
-  /**
-     * dilemma — consideration indices ranked most-important first.
-     * @nullable
-     */
-  ranking?: number[] | null;
+  writtenAnswer?: string | null;
 }

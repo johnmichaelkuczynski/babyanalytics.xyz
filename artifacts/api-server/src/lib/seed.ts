@@ -14,7 +14,7 @@ import { logger } from "./logger";
 // the value stored in seed_meta; a mismatch forces a full re-seed, so content
 // edits self-heal in every environment (including a republished production)
 // without a manual database wipe.
-const SEED_CONTENT_VERSION = "2026-06-12-data-for-everyone-v1";
+const SEED_CONTENT_VERSION = "2026-06-14-data-for-everyone-v2-no-primers";
 
 type SeedTopic = {
   slug: string;
@@ -524,111 +524,6 @@ const ASSIGNMENTS: SeedAssignment[] = [
     ],
   },
 ];
-
-type SeedPrimer = SeedTopic;
-
-const REASONING_PRIMERS: SeedPrimer[] = [
-  {
-    slug: "reasoning-primer-ethical",
-    title: "How to reason about everyday data dilemmas",
-    weekNumber: 1,
-    blurb:
-      "Assessment primer: weighing what matters when data and fairness collide.",
-    lectureTitle: "Primer: How to reason about everyday data dilemmas",
-    body: `# How to reason about everyday data dilemmas
-
-This short primer prepares you for the **Professional Judgment** check. That activity does not ask for the "right" answer — it asks *which reasons you give weight to* when you decide. Here is the kind of thinking it rewards.
-
-## A dilemma is a clash of reasons
-
-A real dilemma is a situation where several honest reasons pull in different directions: a promise you made, pressure to make something look good, what's easiest for you, and the truth of what you show others. Reasoning well does not mean pretending the reasons you act against don't exist — it means being honest that they had some weight, and saying why other reasons mattered more.
-
-## Three kinds of reasons
-
-When you justify a decision, the *kind* of reason you lean on matters:
-
-- **What's-easiest-for-me reasons** — what is most comfortable, safe, or rewarding for the person deciding. ("It would be awkward to say no.")
-- **Just-following-the-rule reasons** — what the rules, the grown-ups, or your role say to do. ("I was told to.") Rules keep order, but a rule can itself be unfair.
-- **Fairness reasons** — appeals to honesty, keeping promises, and the interests of *everyone affected*, the kind of reason you could defend to anyone. ("The people trusting this deserve the truth.")
-
-The check's score rises when you give the most weight to fairness reasons rather than to convenience or to "because those are the rules."
-
-## How to do this activity well
-
-1. **Decide** what the person should do.
-2. **Rate every reason** by how much it actually weighed on you — be honest, not strategic.
-3. **Rank your top few.** Ranking is where you say what *most* drove the decision.
-4. **Read each reason carefully.** Some are deliberately empty or fancy-sounding and reward nothing; ranking one of those high is a sign of careless answering.
-
-There is no penalty for the choice you make. What's measured is the *quality of the reasons* you stand behind.`,
-  },
-  {
-    slug: "reasoning-primer-critical",
-    title: "Core clear-thinking skills",
-    weekNumber: 1,
-    blurb:
-      "Assessment primer: analysis, inference, evaluation, deduction, and induction.",
-    lectureTitle: "Primer: Core clear-thinking skills",
-    body: `# Core clear-thinking skills
-
-This short primer prepares you for the **Critical Reasoning** check — a set of multiple-choice questions that test five different thinking skills. These are the same skills you use when you decide what a set of facts really shows, so they matter directly for working with data.
-
-## The five skills
-
-- **Analysis** — break an argument into parts: find its **point** (the conclusion), the **reasons** given for it, and any hidden assumption it leans on. Ask: "What is this trying to convince me of, and what does it take for granted?"
-- **Inference** — work out what *follows* from what you're told, and how strongly. Tell apart what *must* be true, what is *likely*, and what is only *possible*.
-- **Evaluation** — judge how much the reasons actually support the point. Notice when evidence is beside the point, a source isn't trustworthy, or a step doesn't really connect.
-- **Deduction** — reasoning where true starting facts *guarantee* the conclusion. If the starting facts are true, the conclusion can't be false. Watch for sneaky forms that only *look* airtight.
-- **Induction** — reasoning from a few examples to a *probable* general rule or prediction. Strong induction uses many fair examples; weak induction over-generalizes from too few.
-
-## A recurring trap: things that move together
-
-Most wrong answers are statements that *sound* reasonable or data-driven but are **not actually backed up by what you were told**. The discipline this check rewards is the same one data work demands: keep apart what the facts **show**, what you're **assuming**, and what only *sounds* right. Two things happening together does not prove one causes the other.
-
-## How to do this activity well
-
-1. Find the **point** (conclusion) first, then the reasons.
-2. Ask which of the five skills the question is testing (a hidden-assumption question is analysis; a "what follows" question is inference or deduction; a "how good is this reasoning" question is evaluation).
-3. Pick the option that follows **only** from what you were given — not the one that merely sounds true or appealing.`,
-  },
-];
-
-// Insert any teaching-to-the-test primer lectures whose slug is not yet present.
-// Safe to run on every boot: it only adds what is missing.
-export async function seedReasoningPrimersIfMissing(): Promise<void> {
-  let added = 0;
-  for (let i = 0; i < REASONING_PRIMERS.length; i++) {
-    const t = REASONING_PRIMERS[i]!;
-    const existing = await db
-      .select({ id: topicsTable.id })
-      .from(topicsTable)
-      .where(eq(topicsTable.slug, t.slug));
-    if (existing.length > 0) continue;
-    const [inserted] = await db
-      .insert(topicsTable)
-      .values({
-        slug: t.slug,
-        title: t.title,
-        weekNumber: t.weekNumber,
-        blurb: t.blurb,
-        position: 900 + i,
-      })
-      .returning();
-    if (!inserted) throw new Error(`Failed to insert primer ${t.slug}`);
-    await db.insert(lecturesTable).values({
-      topicId: inserted.id,
-      weekNumber: t.weekNumber,
-      title: t.lectureTitle,
-      body: t.body,
-    });
-    added += 1;
-  }
-  if (added > 0) {
-    logger.info({ added }, "Reasoning primers seeded");
-  } else {
-    logger.info("Reasoning primers: already present, skipping");
-  }
-}
 
 export async function seedIfEmpty(): Promise<void> {
   // The course was migrated to the Data Analytics for Everyone syllabus.

@@ -6,10 +6,11 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type ReasoningReviewItemType = typeof ReasoningReviewItemType[keyof typeof ReasoningReviewItemType];
+export type ReasoningAssessmentFormat = typeof ReasoningAssessmentFormat[keyof typeof ReasoningAssessmentFormat];
 
 
-export const ReasoningReviewItemType = {
+export const ReasoningAssessmentFormat = {
   mcq: 'mcq',
   written: 'written',
+  hybrid: 'hybrid',
 } as const;

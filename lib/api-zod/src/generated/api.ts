@@ -594,8 +594,10 @@ export const GenerateReportResponse = zod.object({
  */
 export const ListReasoningAssessmentsResponseItem = zod.object({
   "id": zod.number(),
-  "instrument": zod.enum(['ethical', 'critical']),
-  "phase": zod.enum(['baseline', 'unit1', 'unit2', 'unit3', 'unit4']),
+  "kind": zod.enum(['subject', 'reasoning']),
+  "format": zod.enum(['mcq', 'written', 'hybrid']),
+  "length": zod.enum(['short', 'medium', 'long']),
+  "phase": zod.enum(['before', 'during1', 'during2', 'after']),
   "title": zod.string(),
   "subtitle": zod.string().nullish(),
   "itemCount": zod.number(),
@@ -614,21 +616,20 @@ export const GetReasoningAssessmentParams = zod.object({
 
 export const GetReasoningAssessmentResponse = zod.object({
   "id": zod.number(),
-  "instrument": zod.enum(['ethical', 'critical']),
-  "phase": zod.enum(['baseline', 'unit1', 'unit2', 'unit3', 'unit4']),
+  "kind": zod.enum(['subject', 'reasoning']),
+  "format": zod.enum(['mcq', 'written', 'hybrid']),
+  "length": zod.enum(['short', 'medium', 'long']),
+  "phase": zod.enum(['before', 'during1', 'during2', 'after']),
   "title": zod.string(),
   "subtitle": zod.string().nullish(),
   "instructions": zod.string(),
   "items": zod.array(zod.object({
   "id": zod.number(),
   "position": zod.number(),
-  "type": zod.enum(['dilemma', 'mcq']),
+  "type": zod.enum(['mcq', 'written']),
   "prompt": zod.string(),
-  "options": zod.array(zod.string()).nullish().describe('For mcq items — the answer choices.'),
-  "decisionOptions": zod.array(zod.string()).nullish().describe('For dilemma items — the possible decisions on the scenario.'),
-  "considerations": zod.array(zod.string()).nullish().describe('For dilemma items — statements to rate by importance and rank.'),
-  "rankCount": zod.number().nullish().describe('For dilemma items — how many top considerations to rank.')
-}))
+  "options": zod.array(zod.string()).nullish().describe('For mcq items — the answer choices.')
+})).describe('Always empty for an assessment — items are generated fresh per attempt and returned by the start endpoint, never repeated.')
 })
 
 
@@ -659,27 +660,23 @@ export const StartReasoningAttemptResponse = zod.object({
 })).nullish().describe('For a submitted attempt being reviewed — the score metrics.'),
   "review": zod.array(zod.object({
   "itemId": zod.number(),
-  "type": zod.enum(['dilemma', 'mcq']),
+  "type": zod.enum(['mcq', 'written']),
   "prompt": zod.string(),
   "options": zod.array(zod.string()).nullish().describe('mcq — the answer choices shown.'),
   "selectedIndex": zod.number().nullish().describe('mcq — the option index the student chose.'),
   "correctIndex": zod.number().nullish().describe('mcq — the correct option index.'),
-  "isCorrect": zod.boolean().nullish().describe('mcq — whether the student\'s choice was correct.'),
-  "decisionOptions": zod.array(zod.string()).nullish().describe('dilemma — the possible decisions.'),
-  "decisionIndex": zod.number().nullish().describe('dilemma — the decision the student chose.'),
-  "considerations": zod.array(zod.string()).nullish().describe('dilemma — the considerations presented.'),
-  "ranking": zod.array(zod.number()).nullish().describe('dilemma — consideration indices the student ranked most-important first.')
+  "writtenAnswer": zod.string().nullish().describe('written — the student\'s submitted answer.'),
+  "modelAnswer": zod.string().nullish().describe('written — the reference\/model answer.'),
+  "rationale": zod.string().nullish().describe('written — the grader\'s rationale for the verdict.'),
+  "isCorrect": zod.boolean().nullish().describe('Whether the student\'s answer was judged correct (mcq + written).')
 })).nullish().describe('For a submitted attempt being reviewed — per-question review with the student\'s answer and the correct answer.'),
   "items": zod.array(zod.object({
   "id": zod.number(),
   "position": zod.number(),
-  "type": zod.enum(['dilemma', 'mcq']),
+  "type": zod.enum(['mcq', 'written']),
   "prompt": zod.string(),
-  "options": zod.array(zod.string()).nullish().describe('For mcq items — the answer choices.'),
-  "decisionOptions": zod.array(zod.string()).nullish().describe('For dilemma items — the possible decisions on the scenario.'),
-  "considerations": zod.array(zod.string()).nullish().describe('For dilemma items — statements to rate by importance and rank.'),
-  "rankCount": zod.number().nullish().describe('For dilemma items — how many top considerations to rank.')
-})).describe('The exact items to present for THIS attempt. The first take uses the seeded template; each retake returns freshly generated questions of the same kind (same instrument, skill areas, and structure).')
+  "options": zod.array(zod.string()).nullish().describe('For mcq items — the answer choices.')
+})).describe('The exact items to present for THIS attempt. Every attempt (first take or retake) returns freshly generated, never-repeated questions of the chosen kind, format, and length.')
 })
 
 
@@ -694,9 +691,7 @@ export const SubmitReasoningAttemptBody = zod.object({
   "responses": zod.array(zod.object({
   "itemId": zod.number(),
   "selectedIndex": zod.number().nullish().describe('mcq — chosen option index.'),
-  "decisionIndex": zod.number().nullish().describe('dilemma — chosen decision index.'),
-  "ratings": zod.array(zod.number()).nullish().describe('dilemma — importance rating (0-4) per consideration, by index.'),
-  "ranking": zod.array(zod.number()).nullish().describe('dilemma — consideration indices ranked most-important first.')
+  "writtenAnswer": zod.string().nullish().describe('written — the student\'s short answer text.')
 }))
 })
 
@@ -712,22 +707,21 @@ export const SubmitReasoningAttemptResponse = zod.object({
 })),
   "review": zod.array(zod.object({
   "itemId": zod.number(),
-  "type": zod.enum(['dilemma', 'mcq']),
+  "type": zod.enum(['mcq', 'written']),
   "prompt": zod.string(),
   "options": zod.array(zod.string()).nullish().describe('mcq — the answer choices shown.'),
   "selectedIndex": zod.number().nullish().describe('mcq — the option index the student chose.'),
   "correctIndex": zod.number().nullish().describe('mcq — the correct option index.'),
-  "isCorrect": zod.boolean().nullish().describe('mcq — whether the student\'s choice was correct.'),
-  "decisionOptions": zod.array(zod.string()).nullish().describe('dilemma — the possible decisions.'),
-  "decisionIndex": zod.number().nullish().describe('dilemma — the decision the student chose.'),
-  "considerations": zod.array(zod.string()).nullish().describe('dilemma — the considerations presented.'),
-  "ranking": zod.array(zod.number()).nullish().describe('dilemma — consideration indices the student ranked most-important first.')
+  "writtenAnswer": zod.string().nullish().describe('written — the student\'s submitted answer.'),
+  "modelAnswer": zod.string().nullish().describe('written — the reference\/model answer.'),
+  "rationale": zod.string().nullish().describe('written — the grader\'s rationale for the verdict.'),
+  "isCorrect": zod.boolean().nullish().describe('Whether the student\'s answer was judged correct (mcq + written).')
 })).describe('Per-question review — each item with the student\'s answer and the correct answer.')
 })
 
 
 /**
- * @summary Course gradebook (coursework 80% + diagnostics 20%)
+ * @summary Course gradebook (coursework 100%; diagnostics are ungraded)
  */
 export const GetGradebookResponse = zod.object({
   "overallPercent": zod.number(),
@@ -746,13 +740,6 @@ export const GetGradebookResponse = zod.object({
   "weekNumber": zod.number(),
   "status": zod.enum(['not_started', 'in_progress', 'submitted']),
   "bestScore": zod.number().nullish()
-})),
-  "reasoning": zod.array(zod.object({
-  "id": zod.number(),
-  "instrument": zod.enum(['ethical', 'critical']),
-  "phase": zod.enum(['baseline', 'unit1', 'unit2', 'unit3', 'unit4']),
-  "title": zod.string(),
-  "status": zod.enum(['not_started', 'in_progress', 'passed'])
 }))
 })
 

@@ -27,28 +27,23 @@ export interface ReasoningReviewItem {
      */
   correctIndex?: number | null;
   /**
-     * mcq — whether the student's choice was correct.
+     * written — the student's submitted answer.
+     * @nullable
+     */
+  writtenAnswer?: string | null;
+  /**
+     * written — the reference/model answer.
+     * @nullable
+     */
+  modelAnswer?: string | null;
+  /**
+     * written — the grader's rationale for the verdict.
+     * @nullable
+     */
+  rationale?: string | null;
+  /**
+     * Whether the student's answer was judged correct (mcq + written).
      * @nullable
      */
   isCorrect?: boolean | null;
-  /**
-     * dilemma — the possible decisions.
-     * @nullable
-     */
-  decisionOptions?: string[] | null;
-  /**
-     * dilemma — the decision the student chose.
-     * @nullable
-     */
-  decisionIndex?: number | null;
-  /**
-     * dilemma — the considerations presented.
-     * @nullable
-     */
-  considerations?: string[] | null;
-  /**
-     * dilemma — consideration indices the student ranked most-important first.
-     * @nullable
-     */
-  ranking?: number[] | null;
 }

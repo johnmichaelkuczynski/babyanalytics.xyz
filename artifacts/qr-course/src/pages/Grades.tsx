@@ -5,11 +5,6 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
 
-const PHASE_SHORT: Record<string, string> = {
-  baseline: "Baseline",
-  unit1: "Unit 1",
-};
-
 function statusPill(status: string) {
   const passed = status === "passed" || status === "submitted";
   const cls = passed
@@ -30,7 +25,9 @@ export default function Grades() {
         <div>
           <h1 className="text-3xl font-serif font-bold text-primary mb-2">Grades</h1>
           <p className="text-muted-foreground">
-            Your course grade combines coursework (80%) and diagnostic assessments (20%).
+            Your course grade comes entirely from coursework — homework, the unit test,
+            and the final. Diagnostic assessments are optional practice and never affect
+            your grade.
           </p>
         </div>
 
@@ -93,28 +90,6 @@ export default function Grades() {
                         )}
                         {statusPill(a.status)}
                       </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-4">
-              <h2 className="text-xl font-serif font-semibold border-b pb-2">
-                Diagnostic Assessments
-              </h2>
-              <div className="flex flex-col divide-y border rounded-md">
-                {gb.reasoning.map((r) => (
-                  <Link key={r.id} href={`/reasoning/${r.id}`}>
-                    <div className="p-4 flex items-center justify-between hover:bg-secondary/50 cursor-pointer">
-                      <div className="flex flex-col">
-                        <span className="font-medium">{r.title}</span>
-                        <span className="text-xs uppercase tracking-wider text-muted-foreground">
-                          {r.instrument === "ethical" ? "Professional Judgment" : "Critical Reasoning"} ·{" "}
-                          {PHASE_SHORT[r.phase] ?? r.phase}
-                        </span>
-                      </div>
-                      {statusPill(r.status)}
                     </div>
                   </Link>
                 ))}

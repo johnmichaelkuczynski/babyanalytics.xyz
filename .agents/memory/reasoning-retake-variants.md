@@ -1,68 +1,47 @@
 ---
-name: Reasoning diagnostic retake variants
-description: How retakes of reasoning diagnostics get fresh-but-same-kind questions, and the invariants that must hold.
+name: Diagnostic retake freshness
+description: How diagnostic retakes stay fresh per attempt, and the invariants that must hold.
 ---
 
-# Reasoning diagnostic retakes
+# Diagnostic retakes (subject + reasoning)
 
-EVERY take of a reasoning diagnostic — including the very first take and any
-take after a course reset (attempts cleared) — generates fresh items of the SAME
-KIND and persists them against that attempt (`diagnostic_items.attemptId =
-<attempt>`), so every attempt owns its own item set. The seeded TEMPLATE items
-(`diagnostic_items.attemptId IS NULL`) are NOT shown as a real take; they are
-only the structural blueprint for generation, the assessment preview, and the
-fallback if generation fails.
+The diagnostic system has two KINDS (`subject` = data-analytics mastery,
+`reasoning` = general reasoning, NOT docility/agreement) × 3 FORMATS
+(mcq/written/hybrid) × 3 LENGTHS (short/medium/long) × 4 PHASES
+(before/during1/during2/after) = 72 catalog rows. Diagnostics NEVER affect the
+grade — coursework is 100%. Retakes are unlimited and every attempt gets fresh
+questions.
 
-**Why not "first take uses template":** an earlier version only generated on
-retake (gated on prior-attempt existence). After a reset wiped attempts, the next
-take looked like a first take and served the identical template again. Never gate
-freshness on prior-attempt existence — always generate per new attempt.
+Catalog rows are seeded WITHOUT items. Items only ever exist per attempt
+(`diagnostic_items.attemptId = <attempt>`), so every attempt owns its own set.
+Never gate freshness on prior-attempt existence — always generate per new attempt
+(a past version that only generated "on retake" re-served identical questions
+after a reset wiped attempts).
 
-**Invariants a retake MUST preserve (the "same kind" contract):**
-- Same instrument (critical vs ethical), same item count, same answer structure.
-- Critical: 4-option MCQs, exactly one correct, and the per-position skillArea
-  order must match the template exactly.
-- Ethical: same dilemma structure — same consideration/stage multiset, same
-  rankCount, same number of decision options.
+**Freshness invariants (must all hold for both the LLM path and the fallback):**
+- The real correctness guard is full-history dedup: a generated prompt is
+  rejected if its normalized form matches ANY prior-attempt prompt, not just the
+  recent ones. The list of prior prompts shown to the LLM is capped only as a
+  prompt-size guard — it is guidance, NOT the dedup mechanism.
+- No two prompts may repeat within a single attempt.
+- The deterministic fallback (used when the model is unavailable) must be
+  freshness-aware too: it is seeded with the prior-attempt prompt history and
+  must never block submission. **Why:** an earlier fallback ignored history and
+  cloned one template N times, producing identical questions.
 
-**Why pin skillArea to the template position:** the LLM is asked to return a
-skillArea per generated question but cannot be trusted to keep the order. Always
-overwrite the generated skillArea with the template's expected skill for that
-index (do NOT accept the model's value even if it's a valid skill), or the
-retake silently reorders skill areas and breaks per-skill scoring.
+**Resume vs. retake — a deliberate, easily-mistaken behavior:**
+- A retake resumes an existing IN-PROGRESS (unsubmitted) attempt if one exists,
+  to preserve progress on a mid-assessment refresh. Fresh questions only appear
+  after the prior attempt is SUBMITTED and a new attempt starts.
+- **Testing gotcha:** two retakes back-to-back WITHOUT submitting return the same
+  item set (same in-progress attempt) — this is NOT a freshness bug. Always
+  verify freshness via start → submit → retake, never start → start.
 
-**Scoring must use the attempt's own items, not the template.** Submit resolves
-the in-progress attempt first, then loads items for THAT attempt
-(`attemptId`), falling back to the template only when there is no attempt.
-Resume (start without retake) returns the in-progress attempt's items so a
-refresh mid-attempt shows the same questions.
+**Scoring uses the attempt's own items, graded on model-judged correctness;
+stored keys/modelAnswers are fallible hints.** Written grading is lenient and
+never blocks submission. An UNANSWERED mcq reports `isCorrect: null` (neutral
+"No answer"), never `false`. The client item response omits the answer key.
 
-**Never block submission:** variant generation falls back to template items on
-any AI/validation failure.
-
-**How to apply:** any change to generation must keep these invariants; the
-client-facing item response intentionally omits `scoring` (the answer key), so
-verify skill order / correctness via the submit metrics breakdown, not the GET.
-
-**Per-question review on the results screen:** submit and revisit (start without
-retake on a submitted attempt) both return a `review[]` (question + student's
-answer + correct answer), built from the attempt's items and stored `responses`
-jsonb. An UNANSWERED MCQ (no selectedIndex) must report `isCorrect: null`, NOT
-`false` — submit validation does not force every item answered, and partial/
-historical responses exist, so treating "no answer" as "incorrect" mislabels it.
-The UI renders null as a neutral "No answer" badge, true=green, false=red.
-
-**Grade on actual correctness, not the stored answer key.** Correctness is
-judged by the model on the merits; stored keys/model answers are only fallible
-hints it can override. For MCQ (critical) assessments, `judgeCritical()` makes
-one batched LLM call at submit to pick the genuinely-correct option per item
-(falls back to stored `correctIndex` on failure/invalid index). The judged map
-must drive ALL THREE grading surfaces in lockstep — `scoreSummary`
-headline/metrics, the `review[]`, AND the persisted `diagnostic_responses.is_correct`
-rows — or analytics will disagree with the results screen. Judged answers are
-persisted in `scoreSummary.correctByItem` so revisit rebuilds review without
-re-judging. Written grading (`gradeAnswer`/`gradePracticeEssay`) carries the
-same fallible-hint framing. Ethical-dilemma instrument is a values inventory,
-not a correctness test — left untouched.
-**Why:** stored keys can be wrong, and partial updates leave one surface on the
-old key behavior (an architect-caught regression).
+**Known limit:** fallback bank-exhaustion uniqueness is lexical (scenario-label
+suffix), not semantic — only relevant if the model is down for many consecutive
+retakes; expand the bank if true semantic novelty is ever required.

@@ -571,7 +571,7 @@ paths:
     get:
       operationId: getGradebook
       tags: [reasoning]
-      summary: Course gradebook (coursework 80% + diagnostics 20%)
+      summary: Course gradebook (coursework 100%; diagnostics are ungraded)
       responses:
         "200":
           description: OK
@@ -1050,15 +1050,21 @@ components:
 
     ReasoningAssessmentSummary:
       type: object
-      required: [id, instrument, phase, title, itemCount, status]
+      required: [id, kind, format, length, phase, title, itemCount, status]
       properties:
         id: { type: integer }
-        instrument:
+        kind:
           type: string
-          enum: [ethical, critical]
+          enum: [subject, reasoning]
+        format:
+          type: string
+          enum: [mcq, written, hybrid]
+        length:
+          type: string
+          enum: [short, medium, long]
         phase:
           type: string
-          enum: [baseline, unit1, unit2, unit3, unit4]
+          enum: [before, during1, during2, after]
         title: { type: string }
         subtitle: { type: ["string", "null"] }
         itemCount: { type: integer }
@@ -1075,40 +1081,38 @@ components:
         position: { type: integer }
         type:
           type: string
-          enum: [dilemma, mcq]
+          enum: [mcq, written]
         prompt: { type: string }
         options:
           type: ["array", "null"]
           items: { type: string }
           description: For mcq items — the answer choices.
-        decisionOptions:
-          type: ["array", "null"]
-          items: { type: string }
-          description: For dilemma items — the possible decisions on the scenario.
-        considerations:
-          type: ["array", "null"]
-          items: { type: string }
-          description: For dilemma items — statements to rate by importance and rank.
-        rankCount:
-          type: ["integer", "null"]
-          description: For dilemma items — how many top considerations to rank.
 
     ReasoningAssessment:
       type: object
-      required: [id, instrument, phase, title, instructions, items]
+      required: [id, kind, format, length, phase, title, instructions, items]
       properties:
         id: { type: integer }
-        instrument:
+        kind:
           type: string
-          enum: [ethical, critical]
+          enum: [subject, reasoning]
+        format:
+          type: string
+          enum: [mcq, written, hybrid]
+        length:
+          type: string
+          enum: [short, medium, long]
         phase:
           type: string
-          enum: [baseline, unit1, unit2, unit3, unit4]
+          enum: [before, during1, during2, after]
         title: { type: string }
         subtitle: { type: ["string", "null"] }
         instructions: { type: string }
         items:
           type: array
+          description: >-
+            Always empty for an assessment — items are generated fresh per
+            attempt and returned by the start endpoint, never repeated.
           items:
             $ref: "#/components/schemas/ReasoningItem"
 
@@ -1141,9 +1145,9 @@ components:
         items:
           type: array
           description: >-
-            The exact items to present for THIS attempt. The first take uses the
-            seeded template; each retake returns freshly generated questions of
-            the same kind (same instrument, skill areas, and structure).
+            The exact items to present for THIS attempt. Every attempt (first
+            take or retake) returns freshly generated, never-repeated questions
+            of the chosen kind, format, and length.
           items:
             $ref: "#/components/schemas/ReasoningItem"
 
@@ -1155,17 +1159,9 @@ components:
         selectedIndex:
           type: ["integer", "null"]
           description: mcq — chosen option index.
-        decisionIndex:
-          type: ["integer", "null"]
-          description: dilemma — chosen decision index.
-        ratings:
-          type: ["array", "null"]
-          items: { type: integer }
-          description: dilemma — importance rating (0-4) per consideration, by index.
-        ranking:
-          type: ["array", "null"]
-          items: { type: integer }
-          description: dilemma — consideration indices ranked most-important first.
+        writtenAnswer:
+          type: ["string", "null"]
+          description: written — the student's short answer text.
 
     RewriteLectureInput:
       type: object
@@ -1214,7 +1210,7 @@ components:
         itemId: { type: integer }
         type:
           type: string
-          enum: [dilemma, mcq]
+          enum: [mcq, written]
         prompt: { type: string }
         options:
           type: ["array", "null"]
@@ -1226,24 +1222,18 @@ components:
         correctIndex:
           type: ["integer", "null"]
           description: mcq — the correct option index.
+        writtenAnswer:
+          type: ["string", "null"]
+          description: written — the student's submitted answer.
+        modelAnswer:
+          type: ["string", "null"]
+          description: written — the reference/model answer.
+        rationale:
+          type: ["string", "null"]
+          description: written — the grader's rationale for the verdict.
         isCorrect:
           type: ["boolean", "null"]
-          description: mcq — whether the student's choice was correct.
-        decisionOptions:
-          type: ["array", "null"]
-          items: { type: string }
-          description: dilemma — the possible decisions.
-        decisionIndex:
-          type: ["integer", "null"]
-          description: dilemma — the decision the student chose.
-        considerations:
-          type: ["array", "null"]
-          items: { type: string }
-          description: dilemma — the considerations presented.
-        ranking:
-          type: ["array", "null"]
-          items: { type: integer }
-          description: dilemma — consideration indices the student ranked most-important first.
+          description: Whether the student's answer was judged correct (mcq + written).
 
     ReasoningResult:
       type: object
@@ -1288,25 +1278,9 @@ components:
           enum: [not_started, in_progress, submitted]
         bestScore: { type: ["number", "null"] }
 
-    GradebookReasoningItem:
-      type: object
-      required: [id, instrument, phase, title, status]
-      properties:
-        id: { type: integer }
-        instrument:
-          type: string
-          enum: [ethical, critical]
-        phase:
-          type: string
-          enum: [baseline, unit1, unit2, unit3, unit4]
-        title: { type: string }
-        status:
-          type: string
-          enum: [not_started, in_progress, passed]
-
     Gradebook:
       type: object
-      required: [overallPercent, letterGrade, components, coursework, reasoning]
+      required: [overallPercent, letterGrade, components, coursework]
       properties:
         overallPercent: { type: number }
         letterGrade: { type: string }
@@ -1318,7 +1292,3 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/GradebookCourseworkItem"
-        reasoning:
-          type: array
-          items:
-            $ref: "#/components/schemas/GradebookReasoningItem"
