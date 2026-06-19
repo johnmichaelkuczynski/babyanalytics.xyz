@@ -2,6 +2,7 @@
 - [Clerk + wouter auth](clerk-wouter-auth.md) — protected-route HOC for wouter must use ComponentType<any> (not Record-constrained); base path `/` stays a public landing, dashboard lives at `/dashboard`.
 - [Diagnostic retake freshness](reasoning-retake-variants.md) — diagnostics (kind×format×length×phase, never affect grade) generate fresh items per attempt via 3 freshness layers; retake resumes in-progress attempts (verify freshness via submit→retake, not start→start).
 - [API auth model](api-auth-model.md) — single-user app: API has NO per-route server authz; Clerk gating is frontend-only. "Admin mode" + skipDetection are intentionally client-side flags, not a trust boundary.
+- [Stale outline cache breaks nav](stale-outline-cache-nav.md) — nav lists from a long-lived query must refetch on route-param change; the lecture view doesn't remount across /lectures/:id.
 - [Tutor starter-question style](tutor-starter-questions.md) — lecture starter questions must ALWAYS be concrete-case application; never definition/abstract/comparison questions (user mandate).
 - [Course content reseed](course-content-reseed.md) — seeded data migrations must self-heal via a content marker + replace-in-transaction; "seed if empty" strands old content in existing/prod DBs (prod writes are read-only).
 - [DATABASE_URL override](database-url-override.md) — app DB resolves to platform `helium/heliumdb`, which overrides a user-set DATABASE_URL secret; checkDatabase() can report "not provisioned" while the app still has a working DB.

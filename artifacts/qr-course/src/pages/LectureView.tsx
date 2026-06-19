@@ -32,7 +32,17 @@ export default function LectureView() {
 
   // Build an ordered, course-wide list of lectures so we can jump straight to
   // the previous / next lecture without going back to the unit page.
-  const { data: overview } = useGetCourseOverview();
+  const overviewQuery = useGetCourseOverview();
+  const overview = overviewQuery.data;
+  // The lecture view stays mounted while navigating between lectures, so the
+  // outline query would otherwise never refetch. Force a refresh whenever the
+  // lecture changes so prev/next always reflects the full, current set of
+  // lectures — even if the tab cached a shorter outline from before more
+  // lectures were added.
+  const { refetch: refetchOverview } = overviewQuery;
+  useEffect(() => {
+    refetchOverview();
+  }, [refetchOverview, lectureId]);
   const { prevLecture, nextLecture } = useMemo(() => {
     const flat = (overview?.weeks ?? []).flatMap((w) => w.lectures);
     const idx = flat.findIndex((l) => l.id === lectureId);
