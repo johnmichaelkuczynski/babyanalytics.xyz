@@ -43,12 +43,16 @@ export default function LectureView() {
   useEffect(() => {
     refetchOverview();
   }, [refetchOverview, lectureId]);
-  const { prevLecture, nextLecture } = useMemo(() => {
+  const { prevLecture, nextLecture, position, total } = useMemo(() => {
+    // One flat, ordered list across every unit, so prev/next always reach the
+    // adjacent lecture even when it lives in a different unit.
     const flat = (overview?.weeks ?? []).flatMap((w) => w.lectures);
     const idx = flat.findIndex((l) => l.id === lectureId);
     return {
       prevLecture: idx > 0 ? flat[idx - 1] : null,
       nextLecture: idx >= 0 && idx < flat.length - 1 ? flat[idx + 1] : null,
+      position: idx >= 0 ? idx + 1 : null,
+      total: flat.length,
     };
   }, [overview?.weeks, lectureId]);
 
@@ -182,13 +186,23 @@ export default function LectureView() {
   return (
     <Layout>
       <div className="px-6 pt-4 pb-2 flex items-center justify-between gap-2 flex-wrap">
-        <Link href={lecture ? `/weeks/${lecture.weekNumber}` : "/"}>
+        <Link href={lecture ? `/weeks/${lecture.weekNumber}` : "/"} className="shrink-0">
           <Button variant="ghost" className="-ml-2 text-muted-foreground hover:text-foreground">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Unit {lecture?.weekNumber ?? ""}
           </Button>
         </Link>
-        <div className="flex items-center gap-2">
+        <div className="flex-1 min-w-0 text-center px-2 order-last w-full sm:order-none sm:w-auto">
+          <div className="text-sm font-semibold truncate" data-testid="text-current-lecture">
+            {lecture?.title ?? ""}
+          </div>
+          {position && total ? (
+            <div className="text-xs text-muted-foreground">
+              Lecture {position} of {total}
+            </div>
+          ) : null}
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
           {prevLecture ? (
             <Link href={`/lectures/${prevLecture.id}`}>
               <Button variant="outline" size="sm" className="h-8" title={`Previous: ${prevLecture.title}`} data-testid="button-prev-lecture-top">
@@ -210,7 +224,7 @@ export default function LectureView() {
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-0">
         {/* LEFT: lecture */}
-        <div className="overflow-y-auto px-8 pb-16 border-r border-border">
+        <div className="min-w-0 overflow-x-hidden overflow-y-auto px-8 pb-16 border-r border-border">
           {isLoading ? (
             <div className="flex flex-col gap-6 mt-4">
               <Skeleton className="h-12 w-3/4" />
@@ -432,7 +446,7 @@ export default function LectureView() {
               {(prevLecture || nextLecture) && (
                 <div className="mt-8 flex items-stretch justify-between gap-3">
                   {prevLecture ? (
-                    <Link href={`/lectures/${prevLecture.id}`} className="flex-1">
+                    <Link href={`/lectures/${prevLecture.id}`} className="flex-1 min-w-0">
                       <Button
                         variant="outline"
                         className="w-full h-auto justify-start text-left py-3"
@@ -449,7 +463,7 @@ export default function LectureView() {
                     <span className="flex-1" />
                   )}
                   {nextLecture ? (
-                    <Link href={`/lectures/${nextLecture.id}`} className="flex-1">
+                    <Link href={`/lectures/${nextLecture.id}`} className="flex-1 min-w-0">
                       <Button
                         className="w-full h-auto justify-end text-right py-3"
                         data-testid="button-next-lecture-bottom"
