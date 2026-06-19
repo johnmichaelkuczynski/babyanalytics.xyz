@@ -65,3 +65,9 @@ id = "AI2_0Y9CfYZ6abgR0FhfZ"
 uri = "file://YOUTUBE_DESCRIPTION.md"
 type = "text"
 title = "YouTube Title + Descriptions (copy & paste)"
+
+[[outputs]]
+id = "iVN9f0QZj7rPGT0llsiST"
+uri = "file://YOUTUBE DESCRIPTION.txt"
+type = "text"
+title = "YOUTUBE DESCRIPTION"
