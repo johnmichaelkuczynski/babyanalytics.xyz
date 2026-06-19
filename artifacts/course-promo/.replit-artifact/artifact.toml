@@ -1,6 +1,6 @@
 kind = "video"
 previewPath = "/course-promo/"
-title = "Data Analytics for Children — Promo"
+title = "Basic Data Analytics — Promo"
 version = "1.0.0"
 id = "artifacts/course-promo"
 router = "path"

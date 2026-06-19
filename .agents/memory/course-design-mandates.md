@@ -31,3 +31,22 @@ single-word concept-ID questions and was the one place that violated this.
 **How to apply:** Any new question-generation prompt must forbid definitions/one-word
 answers and demand a concrete case + reasoned answer. The semantic `gradeAnswer` grader
 already handles reasoned answers, so longer answers are safe to grade.
+
+## Course must read as adult/professional, never childish
+The audience is adults entering a new discipline (grad students, postdocs, faculty). The
+app name is literal/utilitarian ("Basic X", e.g. "Basic Data Analytics") — never "X for
+Children" / "for Kids". Strip ALL childish framing: no children/baby/kid wording, no
+"no math!"-style marketing leads, and no classroom-child example contexts (recess,
+allowance, "kids in our class", "walk to school", "grown-up analyst", school-snack/lunch
+surveys). Replace example contexts with everyday/workplace ones (team, office, commute,
+budget, coffee, reports).
+
+**Why:** Emphatic user mandate — framing the course as "for children" slanders a serious
+course for professional adults. The subject-matter exception (keep child references only
+when the subject is inherently about children, e.g. developmental psychology) does NOT
+apply to data analytics, so running classroom-child examples is off-limits here.
+**How to apply:** When editing lecture bodies OR answer keys, change example contexts in
+lockstep so each lecture↔key pair stays consistent, then bump `SEED_CONTENT_VERSION` to
+trigger the self-heal reseed. Keep genuine code (`React.children`) and inclusive phrases
+("Data Analytics for Everyone"). Any promo/video YouTube `og:title` must be EXACTLY
+"Basic Data Analytics — AI-Powered Course" with no extra descriptors.

@@ -26,8 +26,8 @@ export function Scene4() {
         animate={phase >= 1 ? { scale: 1, opacity: 1 } : { scale: 0.8, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 200, damping: 20 }}
       >
-        <span className="text-primary block mb-2">DATA ANALYTICS</span>
-        <span className="text-white">FOR CHILDREN</span>
+        <span className="text-primary block mb-2">BASIC</span>
+        <span className="text-white">DATA ANALYTICS</span>
       </motion.div>
 
       <motion.div 
@@ -37,22 +37,6 @@ export function Scene4() {
         transition={{ duration: 0.8 }}
       >
         <p>Ask the question. Notice the pattern. Tell the story.</p>
-      </motion.div>
-
-      {/* Decorative stars */}
-      <motion.div 
-        className="absolute top-[20%] left-[15%] text-accent text-[4vw]"
-        animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-      >
-        ✦
-      </motion.div>
-      <motion.div 
-        className="absolute bottom-[20%] right-[15%] text-secondary text-[3vw]"
-        animate={{ scale: [1, 1.5, 1], rotate: [0, -180, -360] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-      >
-        ✦
       </motion.div>
     </motion.div>
   );

@@ -111,7 +111,7 @@ router.get("/course/overview", async (_req, res) => {
 
   res.json(
     GetCourseOverviewResponse.parse({
-      title: "Data Analytics for Children",
+      title: "Basic Data Analytics",
       weeks,
       totals: { assignmentsCompleted, assignmentsTotal, practiceCount },
     }),

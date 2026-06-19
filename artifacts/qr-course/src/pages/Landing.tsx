@@ -60,7 +60,7 @@ export default function Landing() {
             <Search className="w-4 h-4" />
           </div>
           <span className="font-serif font-semibold text-lg tracking-tight">
-            Data Analytics for Children
+            Basic Data Analytics
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -94,8 +94,8 @@ export default function Landing() {
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
             A self-paced course that teaches, tutors, drills, and grades you —
-            data analytics in plain language, no math or coding required. Perfect
-            for curious students and grown-ups alike.
+            data analytics in plain language, built for anyone starting the
+            discipline from the ground up.
           </p>
           <div className="flex items-center justify-center gap-3">
             <Link href="/sign-up">
@@ -160,7 +160,7 @@ export default function Landing() {
       </main>
 
       <footer className="border-t border-border px-6 py-6 text-center text-sm text-muted-foreground">
-        Data Analytics for Children — where the curriculum, the tutor, the grader, and the
+        Basic Data Analytics — where the curriculum, the tutor, the grader, and the
         integrity check all live in one room.
       </footer>
     </div>

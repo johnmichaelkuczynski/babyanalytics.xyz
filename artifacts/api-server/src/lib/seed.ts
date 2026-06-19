@@ -14,7 +14,7 @@ import { logger } from "./logger";
 // the value stored in seed_meta; a mismatch forces a full re-seed, so content
 // edits self-heal in every environment (including a republished production)
 // without a manual database wipe.
-const SEED_CONTENT_VERSION = "2026-06-14-data-for-everyone-v2-no-primers";
+const SEED_CONTENT_VERSION = "2026-06-19-basic-data-analytics-rebrand-2";
 
 type SeedTopic = {
   slug: string;
@@ -54,17 +54,17 @@ Each of those is the same move: you **noticed something**, you **remembered it**
 There is a simple ladder that turns raw facts into something useful:
 
 - **Data** — a plain fact: "It rained Monday, Wednesday, and Friday."
-- **Information** — the fact placed in context: "It rained on 3 of the 5 school days last week."
+- **Information** — the fact placed in context: "It rained on 3 of the 5 workdays last week."
 - **Insight** — what it means for you: "Most of this week was wet, so I should keep an umbrella in my bag."
 
 The point of the ladder is the last rung. A fact that never changes a choice is just trivia. **Data is only worth collecting when it can help you decide something.**
 
 ## Where everyday data comes from
 
-You can gather data the same ways grown-up analysts do, only simpler:
+You can gather data the same ways professional analysts do, only simpler:
 
 - **Counting** — how many people brought lunch today.
-- **Measuring** — how long it takes you to walk to school.
+- **Measuring** — how long it takes you to commute to work.
 - **Asking** — a quick survey of which movie your friends want to see.
 - **Watching over time** — writing down your bedtime every night for a week.
 
@@ -88,7 +88,7 @@ One fact on its own rarely tells you much. The magic happens when you have a few
 
 A **pattern** is anything that repeats, trends, or clearly stands out. Three kinds show up again and again:
 
-- **A trend** — things moving in one direction over time. "Every week this month, more kids signed up for the club than the week before."
+- **A trend** — things moving in one direction over time. "Every week this month, more people signed up for the newsletter than the week before."
 - **A group difference** — one group behaving differently from another. "People who ate breakfast got higher quiz scores than people who skipped it."
 - **An outlier** — one thing that doesn't fit the rest. "Everyone scored around 80 on the test, but one paper had a 12."
 
@@ -108,8 +108,8 @@ So the habit to build is: don't just look at a number, ask **"compared to what?"
 
 The thing that *doesn't* fit is often the most interesting. An outlier is a clue:
 
-- Sometimes it's a **mistake** — that 12 might be a kid who left half the test blank, not a real score.
-- Sometimes it's the **real story** — a sudden spike in sick kids might be the first sign of a flu going around.
+- Sometimes it's a **mistake** — that 12 might be from someone who left half the test blank, not a real score.
+- Sometimes it's the **real story** — a sudden spike in people calling in sick might be the first sign of a flu going around.
 
 Good pattern-spotters don't ignore the odd one out; they stop and ask why it's there.
 
@@ -135,8 +135,8 @@ Here is a secret that professional analysts know and beginners often miss: **the
 
 Compare these:
 
-- Fuzzy: *"Is our class healthy?"*
-- Sharp: *"How many kids in our class eat breakfast on school days?"*
+- Fuzzy: *"Is our team healthy?"*
+- Sharp: *"How many people on our team eat breakfast on workdays?"*
 
 The fuzzy one sounds important but you can't actually answer it — "healthy" could mean a hundred things. The sharp one is **specific** (it names exactly what to look at) and **answerable** (you can imagine the exact number that would answer it). 
 
@@ -148,9 +148,9 @@ A good question usually has three qualities:
 
 ## The question decides the data
 
-The reason the question comes first is that it controls everything after it. The question *"How many kids eat breakfast?"* tells you:
+The reason the question comes first is that it controls everything after it. The question *"How many people eat breakfast?"* tells you:
 
-- **Who** to ask (kids in the class),
+- **Who** to ask (people on the team),
 - **What** to record (yes/no, did you eat breakfast today),
 - **When** you're finished (when you've asked everyone).
 
@@ -158,17 +158,17 @@ If you collect data *before* you have a question, you usually end up with a mess
 
 ## Narrowing a big question
 
-Big questions aren't bad — they're just starting points. The skill is **narrowing** them into something you can actually check. "Is our school spending too much on snacks?" is huge. Narrow it down:
+Big questions aren't bad — they're just starting points. The skill is **narrowing** them into something you can actually check. "Is our office spending too much on supplies?" is huge. Narrow it down:
 
-- "How much do we spend on snacks each month?"
-- "Which snack costs the most per student?"
-- "Did snack spending go up or down since last year?"
+- "How much do we spend on supplies each month?"
+- "Which item costs the most per person?"
+- "Did supply spending go up or down since last year?"
 
 Each smaller question is answerable, and together they chip away at the big one.
 
 ## Watch out for sneaky questions
 
-Some questions secretly assume their own answer. *"Why is our cafeteria food so bad?"* has already decided the food is bad before looking at any data. A fairer version — *"What do students think of the cafeteria food?"* — lets the data speak instead of forcing it. Honest questions don't tilt the answer before you start.
+Some questions secretly assume their own answer. *"Why is our cafeteria food so bad?"* has already decided the food is bad before looking at any data. A fairer version — *"What do employees think of the cafeteria food?"* — lets the data speak instead of forcing it. Honest questions don't tilt the answer before you start.
 
 ## In the real world
 
@@ -182,17 +182,17 @@ When the company that became Netflix wanted to grow, it didn't ask a vague quest
     lectureTitle: "1.4 Sorting, grouping, and counting (the only \"math\" you need)",
     body: `# Sorting, grouping, and counting
 
-People assume data analytics is full of scary math. The truth is that the most useful moves are ones you learned as a little kid: **putting things in order, gathering things that are alike, and counting.** Master these three and you can answer a surprising number of real questions.
+People assume data analytics is full of intimidating math. The truth is that the most useful moves are ones you already use in everyday life: **putting things in order, gathering things that are alike, and counting.** Master these three and you can answer a surprising number of real questions.
 
 ## Sorting: put things in order
 
 **Sorting** means arranging your data from highest to lowest, oldest to newest, A to Z — whatever order fits the question. Sorting instantly answers "what's the most?" and "what's the least?"
 
-If you sort the kids in your class by how far they live from school, the top and bottom of that sorted list immediately tell you who's farthest and closest — no calculation needed. Sorting also makes patterns easier to see, because similar values end up next to each other.
+If you sort a list of employees by how far they commute to the office, the top and bottom of that sorted list immediately tell you who's farthest and closest — no calculation needed. Sorting also makes patterns easier to see, because similar values end up next to each other.
 
 ## Grouping: gather like with like
 
-**Grouping** means putting things that belong together into the same bucket. You sort a bag of candy into "red," "green," and "yellow" piles. You split a survey into "kids who walk" and "kids who ride the bus."
+**Grouping** means putting things that belong together into the same bucket. You sort a jar of coins into "pennies," "nickels," and "dimes" piles. You split a survey into "people who walk to work" and "people who take the bus."
 
 Grouping is powerful because it lets you compare. Once your data is in groups, you can ask, "Which group is biggest?" or "Does this group behave differently from that one?" — the exact pattern-spotting from section 1.2.
 
@@ -202,7 +202,7 @@ Once things are grouped, you **count** them. How many reds? How many bus-riders?
 
 A few simple summaries go a little further, and none of them need real math:
 
-- **Total** — add everything up. (How many snacks did the whole class eat?)
+- **Total** — add everything up. (How many cups of coffee did the whole office drink?)
 - **Most common** — the value that shows up the most. (What's the most popular pizza topping?)
 - **Typical (the average)** — roughly the "middle" value, what you'd expect from a normal one. If three friends read 2, 4, and 6 books, the typical number is 4 — right in the middle.
 
@@ -210,7 +210,7 @@ That's it. Sort, group, count, and summarize. Almost every chart and report you'
 
 ## Why this is enough
 
-A grown-up analyst with a powerful computer doing "sales by region" is doing exactly this: grouping sales by region, then counting (totaling) each group, then sorting to see which region is on top. The computer just does it faster and with more rows. The *idea* is the candy piles.
+A professional analyst with a powerful computer doing "sales by region" is doing exactly this: grouping sales by region, then counting (totaling) each group, then sorting to see which region is on top. The computer just does it faster and with more rows. The *idea* is the coin piles.
 
 ## In the real world
 
@@ -234,10 +234,10 @@ Read these numbers: 4, 11, 6, 23, 7. To find the biggest, you have to check each
 
 The kind of question decides the kind of chart:
 
-- **Bar chart** — for **comparing groups**. Taller bar means more. ("Which fruit is most popular in our class?") The eye compares heights effortlessly.
+- **Bar chart** — for **comparing groups**. Taller bar means more. ("Which fruit is most popular in the office?") The eye compares heights effortlessly.
 - **Line chart** — for showing **change over time**. The line goes up or down as you move left to right. ("How did the temperature change over the week?")
 - **Pictograph** — a friendly version of a bar chart that uses little pictures (one apple = 5 apples) instead of bars. Great for getting started.
-- **Pie chart** — for showing **parts of a whole**, and only when there are just a few slices. ("What fraction of my allowance goes to snacks?")
+- **Pie chart** — for showing **parts of a whole**, and only when there are just a few slices. ("What fraction of my budget goes to dining out?")
 
 Picking the wrong picture hides the story. A line chart only makes sense when the left-to-right order *means* something, like time — using one to compare unrelated groups just confuses people.
 
@@ -275,7 +275,7 @@ A **hunch** is a guess that *feels* true: "I think I sleep worse when I have sod
 
 ## The tiny loop
 
-Every analysis, from a kid's experiment to a giant company's report, follows the same small loop:
+Every analysis, from a quick personal spreadsheet to a giant company's report, follows the same small loop:
 
 1. **Question** — turn the hunch into a sharp, answerable question. ("Do I fall asleep faster on nights without soda?")
 2. **Gather** — collect a little data. (Write down each night: had soda? how long to fall asleep?)
@@ -347,16 +347,16 @@ const ASSIGNMENTS: SeedAssignment[] = [
         prompt:
           "Explain what an 'outlier' is in your own words, and describe a case where an outlier turns out to be a mistake versus a case where it turns out to be the real story. (3–5 sentences.)",
         correctAnswer:
-          "An outlier is a piece of data that clearly doesn't fit with the rest, like one very high or very low value among a group of similar ones. Sometimes an outlier is a mistake: if everyone in class scored around 80 but one paper shows a 12, that low score might just be someone who left half the test blank rather than a true measure of what they know. Other times the outlier is the real story: a sudden spike of kids out sick on one day might be the first sign of a flu spreading. The point is not to ignore the odd value but to stop and ask why it's there.",
+          "An outlier is a piece of data that clearly doesn't fit with the rest, like one very high or very low value among a group of similar ones. Sometimes an outlier is a mistake: if everyone in a group scored around 80 but one paper shows a 12, that low score might just be someone who left half the test blank rather than a true measure of what they know. Other times the outlier is the real story: a sudden spike of people out sick on one day might be the first sign of a flu spreading. The point is not to ignore the odd value but to stop and ask why it's there.",
         explanation:
           "Full credit: defines an outlier as a value that doesn't fit the rest, and gives one example of an outlier-as-error and one of an outlier-as-real-signal.",
       },
       {
         topicSlug: "asking-good-questions",
         prompt:
-          "Take the fuzzy question 'Is our class doing well in school?' and rewrite it into a sharper, answerable question. Explain what makes your version better. (3–5 sentences.)",
+          "Take the fuzzy question 'Is our team doing well at work?' and rewrite it into a sharper, answerable question. Explain what makes your version better. (3–5 sentences.)",
         correctAnswer:
-          "A sharper version is 'How many kids in our class turned in last week's homework on time?' This is better because it is specific — it names exactly who (kids in our class) and what (turning in homework on time) — instead of the vague idea of 'doing well.' It is also measurable, since I can picture the exact number that answers it, and I'd know when I'm done collecting the data. The original question sounds important but you can't actually answer it because 'doing well' could mean a hundred different things.",
+          "A sharper version is 'How many people on our team submitted last week's report on time?' This is better because it is specific — it names exactly who (people on our team) and what (submitting the report on time) — instead of the vague idea of 'doing well.' It is also measurable, since I can picture the exact number that answers it, and I'd know when I'm done collecting the data. The original question sounds important but you can't actually answer it because 'doing well' could mean a hundred different things.",
         explanation:
           "Full credit: turns the vague question into a specific, measurable, answerable one and explains that the improvement is specificity/measurability, not just rewording.",
         hint: "A good question names exactly who and what, and lets you picture the data that would answer it.",
@@ -375,9 +375,9 @@ const ASSIGNMENTS: SeedAssignment[] = [
       {
         topicSlug: "sorting-grouping-counting",
         prompt:
-          "Imagine you have a survey of everyone's favorite school lunch. Explain how you would use grouping and counting to find the most popular lunch, and why sorting the results afterward helps. (3–5 sentences.)",
+          "Imagine you have a survey of everyone's favorite lunch spot. Explain how you would use grouping and counting to find the most popular spot, and why sorting the results afterward helps. (3–5 sentences.)",
         correctAnswer:
-          "First I would group the responses by putting all the same answers together — all the 'pizza' votes in one pile, all the 'tacos' votes in another, and so on. Then I would count how many responses are in each group to see how many people picked each lunch. To find the most popular, I'd look for the group with the highest count. Sorting the groups from most votes to fewest afterward helps because it instantly shows the ranking — the winner is right at the top and the least popular is at the bottom — without having to scan every number.",
+          "First I would group the responses by putting all the same answers together — all the 'pizza place' votes in one pile, all the 'taco truck' votes in another, and so on. Then I would count how many responses are in each group to see how many people picked each spot. To find the most popular, I'd look for the group with the highest count. Sorting the groups from most votes to fewest afterward helps because it instantly shows the ranking — the winner is right at the top and the least popular is at the bottom — without having to scan every number.",
         explanation:
           "Full credit: describes grouping identical responses, counting each group, and notes that sorting orders the groups so the most/least popular stand out immediately.",
       },
@@ -425,7 +425,7 @@ const ASSIGNMENTS: SeedAssignment[] = [
         prompt:
           "Explain the ladder from data to information to insight using one original example of your own. Then explain why an insight is the rung that actually matters. (4–6 sentences.)",
         correctAnswer:
-          "Take walking to school as an example. The data is a plain fact: it took me 8, 12, 9, 7, and 13 minutes on five days. The information is that fact placed in context: on average it takes me about 10 minutes, but it was much slower on two days. The insight is what it means for me: those slow days were when it rained, so on rainy mornings I should leave a few minutes earlier. The insight is the rung that matters because it's the only one that changes what I actually do — the raw times and even the average are just trivia until they help me make the choice to leave earlier.",
+          "Take my commute to work as an example. The data is a plain fact: it took me 8, 12, 9, 7, and 13 minutes on five days. The information is that fact placed in context: on average it takes me about 10 minutes, but it was much slower on two days. The insight is what it means for me: those slow days were when it rained, so on rainy mornings I should leave a few minutes earlier. The insight is the rung that matters because it's the only one that changes what I actually do — the raw times and even the average are just trivia until they help me make the choice to leave earlier.",
         explanation:
           "Full credit: gives an original example showing data (raw fact) → information (fact in context) → insight (what to do), and argues the insight matters because it drives a decision.",
       },
@@ -443,7 +443,7 @@ const ASSIGNMENTS: SeedAssignment[] = [
         prompt:
           "What are the qualities of a good analytics question, and why does the question have to come before collecting data? Give an example of a question that is too fuzzy to answer. (4–6 sentences.)",
         correctAnswer:
-          "A good question is specific (it names exactly who and what), measurable (you can picture the data that would answer it), and useful (the answer would help someone decide something). The question has to come first because it controls everything after it — it tells you who to ask, what to record, and when you're finished collecting. If you gather data before having a question, you usually end up with a messy pile that doesn't quite answer anything. A question that's too fuzzy to answer is something like 'Is our school good?' — 'good' could mean a hundred different things, so you couldn't picture the data that would settle it.",
+          "A good question is specific (it names exactly who and what), measurable (you can picture the data that would answer it), and useful (the answer would help someone decide something). The question has to come first because it controls everything after it — it tells you who to ask, what to record, and when you're finished collecting. If you gather data before having a question, you usually end up with a messy pile that doesn't quite answer anything. A question that's too fuzzy to answer is something like 'Is our team good?' — 'good' could mean a hundred different things, so you couldn't picture the data that would settle it.",
         explanation:
           "Full credit: lists qualities (specific/measurable/useful), explains the question scopes the data and signals completion, and gives a genuinely unanswerable fuzzy question.",
       },
@@ -499,7 +499,7 @@ const ASSIGNMENTS: SeedAssignment[] = [
         prompt:
           "Some people think data analytics requires computers and advanced math. Using ideas from across the course, argue that the core of it is really noticing, comparing, and counting. Use one concrete example. (5–7 sentences.)",
         correctAnswer:
-          "At its heart, data analytics is just paying attention to facts and using them to decide something, which people do without any computer at all. Data is simply things you notice, written down; patterns come from comparing those facts; and the real work is the simple moves of sorting, grouping, and counting. For example, a kid wondering which recess game is most popular can ask classmates, group the answers, count each group, and see the winner — that's a complete analysis with no math beyond counting. Computers and fancy math don't change the ideas; they just let you handle millions of rows faster. The doctor John Snow stopped a deadly outbreak in 1854 by marking deaths on a map and noticing they clustered around one water pump — pure noticing and comparing. So the tools have grown, but the core skill is the same one you already use every day.",
+          "At its heart, data analytics is just paying attention to facts and using them to decide something, which people do without any computer at all. Data is simply things you notice, written down; patterns come from comparing those facts; and the real work is the simple moves of sorting, grouping, and counting. For example, someone deciding which commute route home is fastest can time each option over a week, group the results by route, count and compare them, and see the winner — that's a complete analysis with no calculation beyond counting. Computers and fancy math don't change the ideas; they just let you handle millions of rows faster. The doctor John Snow stopped a deadly outbreak in 1854 by marking deaths on a map and noticing they clustered around one water pump — pure noticing and comparing. So the tools have grown, but the core skill is the same one you already use every day.",
         explanation:
           "Full credit: argues the core is noticing/comparing/counting (not tools), supports it with a concrete no-computer example, and notes that technology only scales the same ideas.",
       },
@@ -508,7 +508,7 @@ const ASSIGNMENTS: SeedAssignment[] = [
         prompt:
           "Explain why a vague question can ruin an analysis before it even starts, and describe how you would take a big, fuzzy question and narrow it into something answerable. Use an example. (5–7 sentences.)",
         correctAnswer:
-          "A vague question ruins an analysis because the question controls everything after it — what data to collect, who to ask, and when you're done — so if it's fuzzy, the whole effort wanders without a target. For example, 'Is our school spending too much on snacks?' is too big and undefined to answer directly, since 'too much' isn't measurable. To narrow it, I'd break it into specific, answerable pieces: 'How much do we spend on snacks each month?', 'Which snack costs the most per student?', and 'Did snack spending go up or down since last year?' Each smaller question names exactly what to measure and could actually be answered with data. Together they chip away at the big question without ever requiring me to guess what the vague version meant. Starting with a sharp question is what keeps the data focused and useful.",
+          "A vague question ruins an analysis because the question controls everything after it — what data to collect, who to ask, and when you're done — so if it's fuzzy, the whole effort wanders without a target. For example, 'Is our office spending too much on supplies?' is too big and undefined to answer directly, since 'too much' isn't measurable. To narrow it, I'd break it into specific, answerable pieces: 'How much do we spend on supplies each month?', 'Which item costs the most per person?', and 'Did supply spending go up or down since last year?' Each smaller question names exactly what to measure and could actually be answered with data. Together they chip away at the big question without ever requiring me to guess what the vague version meant. Starting with a sharp question is what keeps the data focused and useful.",
         explanation:
           "Full credit: explains that the question scopes the whole analysis so vagueness derails it, then narrows a big fuzzy question into specific measurable sub-questions with an example.",
       },

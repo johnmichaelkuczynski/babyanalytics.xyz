@@ -1,6 +1,6 @@
 kind = "video"
 previewPath = "/diagnostics-demo/"
-title = "Data 101 Diagnostics Demo"
+title = "Basic Data Analytics — Diagnostics"
 version = "1.0.0"
 id = "artifacts/diagnostics-demo"
 router = "path"
