@@ -59,3 +59,9 @@ id = "7Gk126T-Bb4dRx8JdJ-dH"
 uri = "file://artifacts/course-promo/public/audio/bg_music.mp3"
 type = "audio"
 title = "background music"
+
+[[outputs]]
+id = "AI2_0Y9CfYZ6abgR0FhfZ"
+uri = "file://YOUTUBE_DESCRIPTION.md"
+type = "text"
+title = "YouTube Title + Descriptions (copy & paste)"
