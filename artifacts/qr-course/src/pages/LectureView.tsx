@@ -444,39 +444,43 @@ export default function LectureView() {
               </div>
 
               {(prevLecture || nextLecture) && (
-                <div className="mt-8 flex items-stretch justify-between gap-3">
+                <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {prevLecture ? (
-                    <Link href={`/lectures/${prevLecture.id}`} className="flex-1 min-w-0">
+                    <Link href={`/lectures/${prevLecture.id}`} className="min-w-0">
                       <Button
                         variant="outline"
-                        className="w-full h-auto justify-start text-left py-3"
+                        className="w-full h-auto py-3 px-4 justify-start gap-3"
                         data-testid="button-prev-lecture-bottom"
                       >
-                        <ArrowLeft className="w-4 h-4 mr-2 shrink-0" />
-                        <span className="flex flex-col min-w-0">
-                          <span className="text-[11px] uppercase tracking-wider text-muted-foreground">Previous</span>
-                          <span className="font-medium truncate">{prevLecture.title}</span>
+                        <ArrowLeft className="w-5 h-5 shrink-0 text-muted-foreground" />
+                        <span className="flex flex-col min-w-0 text-left">
+                          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                            Previous
+                          </span>
+                          <span className="w-full truncate font-medium">{prevLecture.title}</span>
                         </span>
                       </Button>
                     </Link>
                   ) : (
-                    <span className="flex-1" />
+                    <span className="hidden sm:block" />
                   )}
                   {nextLecture ? (
-                    <Link href={`/lectures/${nextLecture.id}`} className="flex-1 min-w-0">
+                    <Link href={`/lectures/${nextLecture.id}`} className="min-w-0">
                       <Button
-                        className="w-full h-auto justify-end text-right py-3"
+                        className="w-full h-auto py-3 px-4 justify-end gap-3"
                         data-testid="button-next-lecture-bottom"
                       >
-                        <span className="flex flex-col min-w-0 items-end">
-                          <span className="text-[11px] uppercase tracking-wider opacity-80">Next lecture</span>
-                          <span className="font-medium truncate">{nextLecture.title}</span>
+                        <span className="flex flex-col min-w-0 text-right">
+                          <span className="text-[11px] font-semibold uppercase tracking-wider opacity-80">
+                            Next lecture
+                          </span>
+                          <span className="w-full truncate font-medium">{nextLecture.title}</span>
                         </span>
-                        <ArrowRight className="w-4 h-4 ml-2 shrink-0" />
+                        <ArrowRight className="w-5 h-5 shrink-0" />
                       </Button>
                     </Link>
                   ) : (
-                    <span className="flex-1" />
+                    <span className="hidden sm:block" />
                   )}
                 </div>
               )}
